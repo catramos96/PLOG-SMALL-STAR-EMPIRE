@@ -15,21 +15,27 @@ help :- 	nl, write('=============== HELP ==============='), nl,nl,
 /*MATRIX*/
 
 getCell(Mat,Row,Column,Value) :- nth1(Row, Mat, ARow), nth1(Column, ARow, Value).
-	
-/*CELLS*/	
 
-cell(1,'S',4,'_','_',0).		%starSystem
-cell(2,'W','x','x','x','x').	%whormhole
-cell(3,'B','x','x','x','x').	%blackhole
-cell(4,'S',1,'_','_',0).		%starSystem
-cell(5,'N','R','_','_',0).		%nebula
+/*CELL*/
 
+player(-1,' ',' ').
+player(0,1,'C').
+player(1,1,'T').
+player(2,2,'C').
+player(3,2,'T').
 
-cell(6,'H','x','R','x','0').		/*Home base */
-cell(7,'H','x','B','x','0').
+displayPlayer(I) :- player(I,P,C), write(P), write(C).
 
-displayCell(A) :- cell(A,B,C,D,E,F),
-				write(B), write(C), write(D), write(E), write(F).
+systemType(0,'S',0).		%empty
+systemType(1,'S',1).		%OnePlanet
+systemType(2,'S',2).		%TwoPlanet
+systemType(3,'S',3).		%ThreePlanet
+systemType(4,'N','R').		%NebulaRed
+systemType(5,'N','B').		%NebulaBlue
+systemType(6,'H',' ').		%HomeWorld
+systemType(7,'B',' ').		%BlackHole
+
+displaySystem(I) :- systemType(I,A,B),write(A),write(B).
 
 /*Board*/
 
@@ -38,21 +44,30 @@ boardInfo(I) :- board(I,M),
 			 write('Cell(Type,Prop,Team,Aloc,NShips)'), nl,nl,
 			 write('Type:  (H) - HomeBase  (S) - Star System  (N) - Nebula System  (B) - Blackhole  (W) - Whormhole'), nl,
 			 write('Properties:  0-4 - Planets  (R)/(B) - Color'), nl,
-			 write('Team:  (R)- Read  (B) - Blue'), nl,
+			 write('Team:  (R)- Red  (B) - Blue'), nl,
 			 write('Alocated:  (C) - Colony  (T) Trade Center'), nl,
-			 write('NShips: 1-4'),nl,
-			 write('_ - can be set to a value'), nl,
-			 write('x - can not have a value'), nl,nl,nl.
+			 write('NShips: 1-4'),nl,nl,nl.
 
-board(1,[[0,1,0,2,0,3,0,4,0,0,0,0,0,0,0],				/*board2players (15x9) - IDs of cells*/
-		 [4,0,6,0,5,0,2,0,1,0,3,0,4,0,0],
-		 [0,5,0,4,0,3,0,2,0,1,0,5,0,2,0],
-		 [1,0,3,0,2,0,5,0,4,0,2,0,1,0,0],
-		 [0,2,0,5,0,3,0,2,0,1,0,5,0,4,0],
-		 [0,0,1,0,4,0,5,0,2,0,1,0,3,0,5],
-		 [0,3,0,2,0,1,0,2,0,5,0,2,0,1,0],
-		 [0,0,0,0,0,0,4,0,1,0,3,0,7,0,2],
-		 [0,0,0,0,0,0,0,5,0,2,0,4,0,5,0]]).
+/*ESTADO INICIAL*/
+board(1,[[0,[1,-1,0],0,[5,-1,0],0,[2,-1,0],0,[0,-1,0],0],			
+		 [[4,-1,0],0,[6,0,4],0,[3,-1,0],0,[7,-1,0],0,[3,-1,0]],
+		 [0,[2,-1,0],0,[0,-1,0],0,[4,-1,0],0,[1,-1,0],0],
+		 [[7,-1,0],0,[2,-1,0],0,[5,-1,0],0,[6,2,4],0,[4,-1,0]],
+		 [0,[3,-1,0],0,[5,-1,0],0,[0,-1,0],0,[4,-1,0],0]]).
+		 
+/*ESTADO FINAL TUDO OCUPADO*/
+board(2,[[0,[1,1,0],0,[5,2,1],0,[2,0,1],0,[0,3,0],0],		
+		 [[4,2,1],0,[6,0,0],0,[3,2,0],0,[7,-1,0],0,[3,3,2]],
+		 [0,[2,3,0],0,[0,1,0],0,[4,0,1],0,[1,1,0],0],
+		 [[7,-1,0],0,[2,0,1],0,[5,2,0],0,[6,2,0],0,[4,2,0]],
+		 [0,[3,0,0],0,[5,1,1],0,[0,0,0],0,[4,3,0],0]]).
+		 
+/*ESTADO FINAL ENCURRALADO FALTA FAZER*/
+board(3,[[0,[1,2,0],0,[5,3,0],0,[2,0,1],0,[0,2,1],0],			
+		 [[4,2,1],0,[6,0,0],0,[3,0,0],0,[7,-1,0],0,[3,2,1]],
+		 [0,[2,1,0],0,[0,0,0],0,[4,0,1],0,[1,0,1],0],
+		 [[7,-1,0],0,[2,2,0],0,[5,2,0],0,[6,2,0],0,[4,3,1]],
+		 [0,[3,-1,0],0,[5,-1,0],0,[0,-1,0],0,[4,-1,0],0]]).
 		 
 displayBoard(I) :- board(I,S), boardInfo(I), displayMatrix2D(S).
 
@@ -61,15 +76,15 @@ displayMatrix2D([L1|L2]) :- displayLine(L1), nl,
 				
 displayMatrix2D([]) :- nl.
 
-displayLine([E1|E2]) :- ((E1 == 0 , write('       '));(write('|'),displayCell(E1),write('|'))), displayLine(E2).
+displayLine([E1|E2]) :- ((E1 == 0 , write('         '));(write('|'),displayCell(E1),write('|'))), displayLine(E2).
 
-displayLine([]):- nl.	
+displayLine([]):- nl, nl.
 
-/*As linhas e colunas começam com índice 1*/
+displayCell([IDs|[IDp|[N|[]]]]) :- systemType(IDs,A,B), player(IDp,C,D), displaySystem(IDs),write(','),displayPlayer(IDp),write(','),write(N).
 
 getBoardCell(I,R,C,V) :- board(I,S) , getCell(S,R,C,V), displayCell(V).		
 
-/*PLAYERS*/
+%player(NOME,LISTROWS,LISTCOLLUMNS,cleft,tleft).
 
-player(R,[],[]).
-player(B,[],[]).
+
+

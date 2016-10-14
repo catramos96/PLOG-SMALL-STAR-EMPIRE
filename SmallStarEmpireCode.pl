@@ -41,12 +41,25 @@ displaySystem(I) :- systemType(I,A,B),write(A),write(B).
 
 boardInfo(I) :- board(I,M),
 			 nl, write('=============== BOARD INFO ==============='), nl, nl,
+			 write('       / \\       '),nl,
+			 write('     /     \\     '),nl,
+			 write('   /         \\   '),nl,
+			 write(' /             \\ '),nl,
+			 write('|               |'),nl,
+			 write('| Type Property |'),nl,
+			 write('|               |'),nl,
+			 write('|Team Aloc Ships|'),nl,
+			 write('|               |'),nl,
+			 write(' \\             / '),nl,
+			 write('   \\         /   '),nl,
+			 write('     \\     /     '),nl,
+			 write('       \\ /       '),nl, nl, 
 			 write('Cell(Type,Prop,Team,Aloc,NShips)'), nl,nl,
 			 write('Type:  (H) - HomeBase  (S) - Star System  (N) - Nebula System  (B) - Blackhole  (W) - Whormhole'), nl,
-			 write('Properties:  0-4 - Planets  (R)/(B) - Color'), nl,
-			 write('Team:  (R)- Red  (B) - Blue'), nl,
+			 write('Properties:  0-3 - Planets  (R)/(B) - Color'), nl,
+			 write('Team:  (1)- Red team  (2) - Blue team'), nl,
 			 write('Alocated:  (C) - Colony  (T) Trade Center'), nl,
-			 write('NShips: 1-4'),nl,nl,nl.
+			 write('NShips: 1-4'),nl,nl,nl .
 
 /*ESTADO INICIAL*/
 board(1,[[0,[1,-1,0],[5,-1,0],[2,-1,0],[0,-1,0]],			
@@ -99,9 +112,8 @@ displayInfo1([IDs|L]) :- systemType(IDs,A,B),
 displayInfo2([IDs|[IDp|[N|[]]]]) :- systemType(IDs,A,B), player(IDp,C,D),
 				write('|'),displayPlayer(IDp),(N == 0, write(' ');write(N)).
 
-displayCell([IDs|[IDp|[N|[]]]]) :- systemType(IDs,A,B), player(IDp,C,D), displaySystem(IDs),write(','),displayPlayer(IDp),write(','),write(N).
+/*displayCell([IDs|[IDp|[N|[]]]]) :- systemType(IDs,A,B), player(IDp,C,D), displaySystem(IDs),write(','),displayPlayer(IDp),write(','),write(N).*/
 
-/*Se a linha da matriz começar com 0 então o elemento da coluna x vai ser na verdade o da coluna x+1*/
-getBoardCell(I,R,C,V) :- board(I,S) , ((getCell(S,R,1,X) , X == 0 , C1 is C + 1 , getCell(S,R,C1,V)) ; getCell(S,R,C,V)), displayCell(V).
+getBoardCell(I,R,C,V) :- board(I,S) , getCell(S,R,C,V), displayCell(V).		
 
 %player(NOME,LISTROWS,LISTCOLLUMNS,cleft,tleft).

@@ -49,11 +49,11 @@ boardInfo(I) :- board(I,M),
 			 write('NShips: 1-4'),nl,nl,nl.
 
 /*ESTADO INICIAL*/
-board(1,[[0,[1,-1,0],0,[5,-1,0],0,[2,-1,0],0,[0,-1,0],0],			
-		 [[4,-1,0],0,[6,0,4],0,[3,-1,0],0,[7,-1,0],0,[3,-1,0]],
-		 [0,[2,-1,0],0,[0,-1,0],0,[4,-1,0],0,[1,-1,0],0],
-		 [[7,-1,0],0,[2,-1,0],0,[5,-1,0],0,[6,2,4],0,[4,-1,0]],
-		 [0,[3,-1,0],0,[5,-1,0],0,[0,-1,0],0,[4,-1,0],0]]).
+board(1,[[0,[1,-1,0],[5,-1,0],[2,-1,0],[0,-1,0]],			
+		 [[4,-1,0],[6,0,4],[3,-1,0],[7,-1,0],[3,-1,0]],
+		 [0,[2,-1,0],[0,-1,0],[4,-1,0],[1,-1,0]],
+		 [[7,-1,0],[2,-1,0],[5,-1,0],[6,2,4],[4,-1,0]],
+		 [0,[3,-1,0],[5,-1,0],[0,-1,0],[4,-1,0]]]).
 		 
 /*ESTADO FINAL TUDO OCUPADO*/
 board(2,[[0,[1,1,0],0,[5,2,1],0,[2,0,1],0,[0,3,0],0],		
@@ -69,22 +69,38 @@ board(3,[[0,[1,2,0],0,[5,3,0],0,[2,0,1],0,[0,2,1],0],
 		 [[7,-1,0],0,[2,2,0],0,[5,2,0],0,[6,2,0],0,[4,3,1]],
 		 [0,[3,-1,0],0,[5,-1,0],0,[0,-1,0],0,[4,-1,0],0]]).
 		 
-displayBoard(I) :- board(I,S), boardInfo(I), displayMatrix2D(S).
+displayBoard(I) :- board(I,[L1|L2]), boardInfo(I), displayTopLine(L1), displayMatrix2D([L1|L2]).
 
-displayMatrix2D([L1|L2]) :- displayLine(L1), nl,
+displayMatrix2D([L1|L2]) :- displayLine(L1),nl,
 							displayMatrix2D(L2).
 				
 displayMatrix2D([]) :- nl.
 
-displayLine([E1|E2]) :- ((E1 == 0 , write('         '));(write('|'),displayCell(E1),write('|'))), displayLine(E2).
+displayLine([L1|L2]) :- displayLine1([L1|L2]), displayLine2([L1|L2]), displayBottomLine([L1|L2]).
 
-displayLine([]):- nl, nl.
 
-displayCell([IDs|[IDp|[N|[]]]]) :- systemType(IDs,A,B), player(IDp,C,D), displaySystem(IDs),write(','),displayPlayer(IDp),write(','),write(N).
+/*BoardLine Composition*/
+displayTopLine([E1|E2]) :- ((E1 == 0 , write('  ')); write(' / \\')),displayLine4(E2).
+displayTopLine([]):- nl.
+
+displayLine1([E1|E2]) :- ((E1 == 0 , write('  '));displayInfo1(E1)),displayLine1(E2).
+displayLine1([]):- write('|'),nl.	
+	
+displayLine2([E1|E2]) :- ((E1 == 0 , write('  '));displayInfo2(E1)),displayLine2(E2).
+displayLine2([]):- write('|'),nl.
+
+displayBottomLine([E1|E2]) :- ((E1 == 0 , write(' /'));write(' \\ /')),displayLine3(E2).
+displayBottomLine([]):- write(' \\').
+
+/*Info per Line*/
+displayInfo1([IDs|L]) :- systemType(IDs,A,B),
+				write('|'), displaySystem(IDs), write(' ').
+
+displayInfo2([IDs|[IDp|[N|[]]]]) :- systemType(IDs,A,B), player(IDp,C,D),
+				write('|'),displayPlayer(IDp),(N == 0, write(' ');write(N)).
+
+/*displayCell([IDs|[IDp|[N|[]]]]) :- systemType(IDs,A,B), player(IDp,C,D), displaySystem(IDs),write(','),displayPlayer(IDp),write(','),write(N).*/
 
 getBoardCell(I,R,C,V) :- board(I,S) , getCell(S,R,C,V), displayCell(V).		
 
 %player(NOME,LISTROWS,LISTCOLLUMNS,cleft,tleft).
-
-
-

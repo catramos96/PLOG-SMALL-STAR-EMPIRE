@@ -99,8 +99,9 @@ displayInfo1([IDs|L]) :- systemType(IDs,A,B),
 displayInfo2([IDs|[IDp|[N|[]]]]) :- systemType(IDs,A,B), player(IDp,C,D),
 				write('|'),displayPlayer(IDp),(N == 0, write(' ');write(N)).
 
-/*displayCell([IDs|[IDp|[N|[]]]]) :- systemType(IDs,A,B), player(IDp,C,D), displaySystem(IDs),write(','),displayPlayer(IDp),write(','),write(N).*/
+displayCell([IDs|[IDp|[N|[]]]]) :- systemType(IDs,A,B), player(IDp,C,D), displaySystem(IDs),write(','),displayPlayer(IDp),write(','),write(N).
 
-getBoardCell(I,R,C,V) :- board(I,S) , getCell(S,R,C,V), displayCell(V).		
+/*Se a linha da matriz começar com 0 então o elemento da coluna x vai ser na verdade o da coluna x+1*/
+getBoardCell(I,R,C,V) :- board(I,S) , ((getCell(S,R,1,X) , X == 0 , C1 is C + 1 , getCell(S,R,C1,V)) ; getCell(S,R,C,V)), displayCell(V).
 
 %player(NOME,LISTROWS,LISTCOLLUMNS,cleft,tleft).

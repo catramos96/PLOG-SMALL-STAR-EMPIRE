@@ -80,7 +80,7 @@ displayLine([L1|L2]) :- displayLine1([L1|L2]), displayLine2([L1|L2]), displayBot
 
 
 /*BoardLine Composition*/
-displayTopLine([E1|E2]) :- ((E1 == 0 , write('  ')); write(' / \\')),displayLine4(E2).
+displayTopLine([E1|E2]) :- ((E1 == 0 , write('  ')); write(' / \\')),displayTopLine(E2).
 displayTopLine([]):- nl.
 
 displayLine1([E1|E2]) :- ((E1 == 0 , write('  '));displayInfo1(E1)),displayLine1(E2).
@@ -89,7 +89,7 @@ displayLine1([]):- write('|'),nl.
 displayLine2([E1|E2]) :- ((E1 == 0 , write('  '));displayInfo2(E1)),displayLine2(E2).
 displayLine2([]):- write('|'),nl.
 
-displayBottomLine([E1|E2]) :- ((E1 == 0 , write(' /'));write(' \\ /')),displayLine3(E2).
+displayBottomLine([E1|E2]) :- ((E1 == 0 , write(' /'));write(' \\ /')),displayBottomLine(E2).
 displayBottomLine([]):- write(' \\').
 
 /*Info per Line*/

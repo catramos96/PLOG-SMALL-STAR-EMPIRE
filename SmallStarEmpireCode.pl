@@ -84,33 +84,28 @@ board(3,[[0,[1,2,0],[5,3,0],[2,0,1],[0,2,1]],
 		 
 displayBoard(I) :- board(I,[L1|L2]), boardInfo(I), displayTopLine(L1), displayMatrix2D([L1|L2]).
 
-displayMatrix2D([L1|L2]) :- displayLine(L1),nl,
-							displayMatrix2D(L2).
-				
-displayMatrix2D([]) :- nl.
+displayMatrix2D([]) :- nl .
+displayMatrix2D([L1|L2]) :- displayLine(L1),nl, displayMatrix2D(L2).
 
 displayLine([L1|L2]) :- displayLine1([L1|L2]), displayLine2([L1|L2]), displayBottomLine([L1|L2]).
 
-
 /*BoardLine Composition*/
-displayTopLine([E1|E2]) :- ((E1 == 0 , write('  ')); write(' / \\')),displayTopLine(E2).
 displayTopLine([]):- nl.
+displayTopLine([E1|E2]) :- ((E1 == 0 , write('  ')); write(' / \\')),displayTopLine(E2).
 
-displayLine1([E1|E2]) :- ((E1 == 0 , write('  '));displayInfo1(E1)),displayLine1(E2).
 displayLine1([]):- write('|'),nl.	
+displayLine1([E1|E2]) :- ((E1 == 0 , write('  '));displayInfo1(E1)),displayLine1(E2).
 	
-displayLine2([E1|E2]) :- ((E1 == 0 , write('  '));displayInfo2(E1)),displayLine2(E2).
 displayLine2([]):- write('|'),nl.
+displayLine2([E1|E2]) :- ((E1 == 0 , write('  '));displayInfo2(E1)),displayLine2(E2).
 
-displayBottomLine([E1|E2]) :- ((E1 == 0 , write(' /'));write(' \\ /')),displayBottomLine(E2).
 displayBottomLine([]):- write(' \\').
+displayBottomLine([E1|E2]) :- ((E1 == 0 , write(' /'));write(' \\ /')),displayBottomLine(E2).
 
 /*Info per Line*/
-displayInfo1([IDs|L]) :- systemType(IDs,A,B),
-				write('|'), displaySystem(IDs), write(' ').
+displayInfo1([IDs|L]) :- systemType(IDs,A,B), write('|'), displaySystem(IDs), write(' ').
 
-displayInfo2([IDs|[IDp|[N|[]]]]) :- systemType(IDs,A,B), player(IDp,C,D),
-				write('|'),displayPlayer(IDp),(N == 0, write(' ');write(N)).
+displayInfo2([IDs|[IDp|[N|[]]]]) :- systemType(IDs,A,B), player(IDp,C,D), write('|'),displayPlayer(IDp),(N == 0, write(' ');write(N)).
 
 /*displayCell([IDs|[IDp|[N|[]]]]) :- systemType(IDs,A,B), player(IDp,C,D), displaySystem(IDs),write(','),displayPlayer(IDp),write(','),write(N).*/
 

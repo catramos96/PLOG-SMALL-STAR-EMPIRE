@@ -13,8 +13,34 @@ help :- 	nl, write('=============== HELP ==============='), nl,nl,
 			write('getBoardCell(Id,i,j,value)'), nl, nl.
 	
 /*MATRIX*/
-
 getCell(Mat,Row,Column,Value) :- nth1(Row, Mat, ARow), nth1(Column, ARow, Value).
+
+
+setCell([],_,_,_,_,_,F,F) :- displayM(F).
+setCell([L1|L2],R,C,Nr,Nc,V,T,Mf) :- 	R is Nr, ! , setCellRow(L1,C,Nc,V,[],Rf),
+										append(T,[Rf|[]],T2),
+										Nr1 = Nr + 1,
+										setCell(L2,R,C,Nr1,Nc,V,T2,Mf).										
+setCell([L1|L2],R,C,Nr,Nc,V,T,Mf) :- 	setCellRow(L1,C,Nc,V,[],Rf),
+										append(T,[L1|[]],T2),
+										Nr1 = Nr + 1,
+										setCell(L2,R,C,Nr1,Nc,V,T2,Mf).
+										
+setCellRow([],_,_,_,F,F).
+setCellRow([L1|L2],C,Nc,V,T,F) :- 	C is Nc ,!, append(T,[V|[]],T2),
+									Nc1 = Nc + 1,
+									setCellRow(L2,C,Nc1,V,T2,F).
+									
+setCellRow([L1|L2],C,Nc,V,T,F) :- 	append(T,[L1|[]],T2),
+									Nc1 = Nc + 1,
+									setCellRow(L2,C,Nc1,V,T2,F).
+		
+
+displayM([]).
+displayM([L1|L2]) :- displayRow(L1),nl, displayM(L2).		
+displayRow([]).
+displayRow([L1|L2]) :- write(L1),displayRow(L2).
+								 
 
 /*CELL*/
 
@@ -104,11 +130,28 @@ displayBottomLine([E1|E2]) :- ((E1 == 0 , write(' /'));write(' \\ /')),displayBo
 
 /*Info per Line*/
 displayInfo1([IDs|L]) :- systemType(IDs,A,B), write('|'), displaySystem(IDs), write(' ').
-
 displayInfo2([IDs|[IDp|[N|[]]]]) :- systemType(IDs,A,B), player(IDp,C,D), write('|'),displayPlayer(IDp),(N == 0, write(' ');write(N)).
 
-/*displayCell([IDs|[IDp|[N|[]]]]) :- systemType(IDs,A,B), player(IDp,C,D), displaySystem(IDs),write(','),displayPlayer(IDp),write(','),write(N).*/
+/*Sets e Gets*/
 
-getBoardCell(I,R,C,V) :- board(I,S) , getCell(S,R,C,V), displayCell(V).		
+displayCell([IDs|[IDp|[N|[]]]]) :- systemType(IDs,A,B), player(IDp,C,D), displaySystem(IDs),write(','),displayPlayer(IDp),write(','),write(N).
 
-%player(NOME,LISTROWS,LISTCOLLUMNS,cleft,tleft).
+getBoardCell(I,R,C,V) :- board(I,S) , getCell(S,R,1,X), X == 0 ,!,C1 is C + 1, getCell(S,R,C1,V), displayCell(V).
+getBoardCell(I,R,C,V) :- board(I,S) , getCell(S,R,C,V), displayCell(V).
+
+setBoardCell(I,R,C,V,F) :- board(I,S), getCell(S,R,1,X), X == 0 ,!, C1 is C+1,setCell(S,R,C1,1,1,V,[],F).
+setBoardCell(I,R,C,V,F) :- board(I,S), setCell(S,R,C,1,1,V,[],F).
+
+/*Verifica se pertence a equipa do jogador e no caso de estar vazio mete o 'position' 'T' ou 'C' na celula*/
+placeShip(I,Team,Position,Row,Column,Final) :- 	getBoardCell(I,Row,Column,[SystemId|[PlayerId|[Ships|[]]]]) ,
+												player(PlayerId,Team,Type), ! , 
+												NewShips is Ships+1, 
+												setBoardCell(I,Row,Column,[SystemId|[PlayerId|[NewShips|[]]]],Final).
+										
+placeShip(I,Team,Position,Row,Column,Final) :- 	getBoardCell(I,Row,Column,[SystemId|[PlayerId|[Ships|[]]]]) ,
+												player(PlayerId,' ',' '), ! , 
+												NewShips is Ships+1, player(NewPlayerId,Team,Position),
+												setBoardCell(I,Row,Column,[SystemId|[NewPlayerId|[NewShips|[]]]],Final).
+
+
+/*%player(NOME,LISTROWS,LISTCOLLUMNS,cleft,tleft).*/

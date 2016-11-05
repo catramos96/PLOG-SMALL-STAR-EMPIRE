@@ -211,19 +211,19 @@ clearscreen :- write('\e[2J').
 game_settings(Board,Name,Team) :- 	load, clearscreen,
 									board_settings(Board), 
 									player_settings(Name,Team).
-		
-turn(Board,Team,FinalBoard) :- 		moveShip(Board,Team,FinalBoard,1).
+	
+make_move(Board,Team,FinalBoard) :-	moveShip(Board,Team,FinalBoard,1).
+
+make_move(Board,Team,FinalBoard) :- moveShip(Board,Team,Tmp,0), !,
+									make_move(Board,Team,FinalBoard).
 									
-turn(Board,Team,FinalBoard) :- 		moveShip(Board,Team,Tmp,0), !,
-									turn(Board,Team,FinalBoard).
+turn(Board,Team,FinalBoard) :- 		nl,write('NEW TURN - Team '), write(Team),nl,
+									displayBoard(Board),
+									make_move(Board,Team,FinalBoard).
 								
 play(Board) :- 	clearscreen,
-				write('NEW TURN - Red Team'), nl,
-				displayBoard(Board),
 				turn(Board,1,Board2),
 				/*clearscreen,*/
-				write('NEW TURN - Blue Team'), nl,
-				displayBoard(Board2),
 				turn(Board2,2,FinalBoard),
 				play(FinalBoard).
 				

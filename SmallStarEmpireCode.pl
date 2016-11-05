@@ -17,13 +17,12 @@ setCell([L1|L2],R,C,Nr,Nc,V,T,Mf) :- 	R is Nr, ! , setCellRow(L1,C,Nc,V,[],Rf),
 										Nr1 = Nr + 1,
 										setCell(L2,R,C,Nr1,Nc,V,T2,Mf).	
 										
-setCell([L1|L2],R,C,Nr,Nc,V,T,Mf) :- 	setCellRow(L1,C,Nc,V,[],Rf),
-										append(T,[L1|[]],T2),
+setCell([L1|L2],R,C,Nr,Nc,V,T,Mf) :- 	append(T,[L1|[]],T2),
 										Nr1 = Nr + 1,
 										setCell(L2,R,C,Nr1,Nc,V,T2,Mf).
 										
 setCellRow([],_,_,_,F,F).
-setCellRow([L1|L2],C,Nc,V,T,F) :- 	C is Nc ,!, append(T,[V|[]],T2),
+setCellRow([_|L2],C,Nc,V,T,F) :- 	C is Nc ,!, append(T,[V|[]],T2),
 									Nc1 = Nc + 1,
 									setCellRow(L2,C,Nc1,V,T2,F).
 									
@@ -31,15 +30,16 @@ setCellRow([L1|L2],C,Nc,V,T,F) :- 	append(T,[L1|[]],T2),
 									Nc1 = Nc + 1,
 									setCellRow(L2,C,Nc1,V,T2,F).		
 		
-displayM([L1|L2]) :- 	displayRow(L1),nl, displayM(L2).								%DISPLAY_MATRIX
+displayM([L1|L2]) :- 	displayList(L1),nl, displayM(L2).								%DISPLAY_MATRIX
 displayM([]).
-displayRow([L1|L2]) :- 	write(L1),displayRow(L2).
-displayRow([]).	
+	
 
 addList(E,L1,L2) :- 	append(L1,[E|[]],L2).
 remList(E,L1,L2) :-		append(_Y,[E|_Z],L1),append(_Y,_Z,L2).
 setList(E,L1,C,L2) :- 	setCellRow(L1,C,1,E,[],L2).	
 getListElem(L1,P,E) :- 	nth1(P,L1,E).
+displayList([L1|L2]) :- write(L1),write(' '),displayList(L2).
+displayList([]).
 
 
 /************************
@@ -65,7 +65,7 @@ systemType(7,'B',' ').		%BlackHole
 
 displaySystem(I) :- systemType(I,A,B),write(A),write(B).
 
-displayCell([IDs|[IDp|[N|[]]]]) :- systemType(IDs,A,B), dominion(IDp,C,D), displaySystem(IDs),write(','),displayDominion(IDp),write(','),write(N).
+displayCell([IDs|[IDp|[N|[]]]]) :- systemType(IDs,_,_), dominion(IDp,_,_), displaySystem(IDs),write(','),displayDominion(IDp),write(','),write(N).
 
 /************************
 *		BOARD			*
@@ -129,8 +129,8 @@ displayBottomLine([]):- write(' \\').
 displayBottomLine([E1|E2]) :- ((E1 == 0 , write(' /'));write(' \\ /')),displayBottomLine(E2).		%BOTTOM_LINE_LIMIT
 
 
-displayInfo1([IDs|L]) :- systemType(IDs,A,B), write('|'), displaySystem(IDs), write(' ').
-displayInfo2([IDs|[IDp|[N|[]]]]) :- systemType(IDs,A,B), dominion(IDp,C,D), write('|'),displayDominion(IDp),(N == 0, write(' ');write(N)).
+displayInfo1([IDs|_]) :- systemType(IDs,_,_), write('|'), displaySystem(IDs), write(' ').
+displayInfo2([IDs|[IDp|[N|[]]]]) :- systemType(IDs,_,_), dominion(IDp,_,_), write('|'),displayDominion(IDp),(N == 0, write(' ');write(N)).
 
 /*GETS,SETS*/
 
@@ -143,37 +143,62 @@ setBoardCell(B,R,C,V,F) :- setCellValue(B,R,C,V,F).
 /************************
 *		PLAYER			*
 ************************/
-
-player_settings(Name,Team) :- 	write('PLAYER SETTINGS'),nl,
-								write('Name: '), read(Name),
-								write('Team (1,2): '), read(Team),
-								nl.
 								
-player1 :- [1,[],[],[]].
-player2 :- [2,[],[],[]].
+player1 :- 	[1,[],[],[]].		%RED_TEAM
+player2 :-	[2,[],[],[]].		%BLUE_TEAM
 
-playerGetTeam([T|X],T).
+createPlayer(Team,NShips,Base,P) :-		playerAddBaseShips([Team,[],[],[]],NShips,Base,P).
+											
+playerAddBaseShips(Pi,NShips,Base,Pf) :- 	NShips \= 0,
+											playerAddShip(Pi,Base,T), N1 is NShips-1,
+											playerAddBaseShips(T,N1,Base,Pf).
 
-playerAddTrade(Pi,TPos,Pf) :- 	getListElem(Pi,2,Tr), addList(TPos,Tr,Trf), setList(Trf,Pi,2,Pf).
+playerAddBaseShips(Pi,_,_,Pi).
+											
+playerGetTeam([T|_],T).
+
+playerGetShips(Pi,S) :- getListElem(Pi,4,S).
+
+
+playerAddControl(Pi,Type,Tpos,Pf) :-	Type == 'C', !,												%ADDS
+										playerAddColony(Pi,Tpos,Pf).
+										
+playerAddControl(Pi,Type,Tpos,Pf) :-	Type == 'T', !,
+										playerAddTrade(Pi,Tpos,Pf).
+										
+playerAddControl(Pi,_,_,Pi).							
+										
+										
+playerAddTrade(Pi,TPos,Pf) :- 	getListElem(Pi,2,Tr), addList(TPos,Tr,Trf), setList(Trf,Pi,2,Pf).	
 playerAddColony(Pi,CPos,Pf) :- 	getListElem(Pi,3,C), addList(CPos,C,Cf), setList(Cf,Pi,3,Pf).
 playerAddShip(Pi,SPos,Pf) :- 	getListElem(Pi,4,S), addList(SPos,S,Sf), setList(Sf,Pi,4,Pf).
 
-playerRemShip(Pi,SPos,Pf) :-	getListElem(Pi,4,S), remList(Spos,S,Sf), setList(Sf,Pi,4,Pf).
+playerRemShip(Pi,SPos,Pf) :-	getListElem(Pi,4,S), remList(SPos,S,Sf), setList(Sf,Pi,4,Pf).		%REMV
 
-playerMoveShip(Pi,Sposi,Sposf,Pf) :-	playerRemShip(Pi,Sposi,Pt) , playerAddShip(Pt,Sposf,Pf).
+playerMoveShip(Pi,SPosi,SPosf,Pf) :-	playerRemShip(Pi,SPosi,Pt) , playerAddShip(Pt,SPosf,Pf).	%MOVE_SHIP
 
+displayTeamName(P) :- 	playerGetTeam(P,T), T is 1, !,
+						write('Blue Team'),nl.
+
+displayTeamName(P) :-	playerGetTeam(P,T), T is 2, !,
+						write('Red Team'),nl.
+
+displayPlayerInfo([_|[Tr|[C|[S|[]]]]]) :- 	write('TRADES: '),nl, displayList(Tr), nl, nl,
+											write('COLONIES: '), nl ,displayList(C), nl, nl,
+											write('SHIPS: '), nl, displayList(S),nl, nl.
 
 
 /************************
 *	GAME GETS & SETS	*
-************************/
-placeShip(Board,Team,Row,Column,ShipsAdd,Final) :- 		getBoardCell(Board,Row,Column,[SystemId|[DominionId|[Ships|[]]]]) ,
-														NewShips is Ships+ShipsAdd,
-														setBoardCell(Board,Row,Column,[SystemId|[DominionId|[NewShips|[]]]],Final).
+************************/			
+
+placeShip(Board,Row,Column,ShipsAdd,Final) :- 		getBoardCell(Board,Row,Column,[SystemId|[DominionId|[Ships|[]]]]) ,
+													NewShips is Ships+ShipsAdd,
+													setBoardCell(Board,Row,Column,[SystemId|[DominionId|[NewShips|[]]]],Final).
 																
 placeShip(Board,_,_,_,_,Board).
 
-hasControl(Board,Row,Column,0) :- getBoardCell(Board,Row,Column,[SystemId|[-1|[0|[]]]]).
+hasControl(Board,Row,Column,0) :- getBoardCell(Board,Row,Column,[_|[-1|[0|[]]]]).
 
 hasControl(_,_,_,1).
 
@@ -184,14 +209,14 @@ placeControl(Board,Team,Row,Column,Type,Final) :-	getBoardCell(Board,Row,Column,
 placeControl(Board,_,_,_,_,Board).
 												
 									
-hasShip(Board,Team,Row,Column,1) :- 	getBoardCell(Board,Row,Column,[SystemId|[DominionId|[Ships|[]]]]),	/*Mesma equipa e com navios*/
-											dominion(DominionId,Team,Type),
-											Ships > 0.	
+hasShip(Pi,Row,Column,1) :- 	playerGetShips(Pi,S),
+									member([Row|Column],S).
 											
 hasShip(_,_,_,_,0).
 											
-validMove(Board,Team,Ri,Ci,Rf,Cf,1) :- 	hasShip(Board,Team,Ri,Ci,1),!,		/*ship to move?*/	
+validMove(Board,Pi,Ri,Ci,Rf,Cf,1) :- 	hasShip(Pi,Ri,Ci,1),!,		/*ship to move?*/	
 										getBoardCell(Board,Rf,Cf,[_|[DominionId|_]]) ,
+										playerGetTeam(Pi,Team),
 										(dominion(DominionId,Team,_) ; (DominionId is -1)).
 											
 validMove(_,_,_,_,0).									
@@ -201,24 +226,33 @@ validMove(_,_,_,_,0).
 *	FUNCTIONALITIES		*
 ************************/
 
-addControl(Board,Team,Rf,Cf,Final) :- 	hasControl(Board,Rf,Cf,R2), R2 is 0, !,			/*has control?*/
-										write('Colony(C) or Trade(T)'),	read(Type),
-										placeControl(Board,Team,Rf,Cf,Type,Final).
+loadPlayers(Board,P1,P2) :- 	getCell(Board,R1,C1,[6,0,N1]),
+								createPlayer(1,N1,[R1|C1],P1),
+								getCell(Board,R2,C2,[6,2,N2]),
+								createPlayer(2,N2,[R2|C2],P2).
 
-addControl(Board,_,_,_,Board) :- write('No Control to add'), nl.									
+addControl(Board,Pi,Rf,Cf,Final,Pf) :- 	hasControl(Board,Rf,Cf,R2), R2 is 0, !,			/*has control?*/
+										write('Colony(C) or Trade(T)'),	read(Type),
+										playerGetTeam(Pi,Team),
+										placeControl(Board,Team,Rf,Cf,Type,Final),
+										playerAddControl(Pi,Type,[Rf|Cf],Pf).
+										
+
+addControl(Board,Pi,_,_,Board,Pi) :- 	nl,write('No Control to add'), nl.									
 
 moveShip_settings(Ri,Ci,Rf,Cf) :- 	nl, write('From Row'), read(Ri),
-									write('From Column'),read(Ci),
-									write('To Row'), read(Rf),
-									write('To Column'),read(Cf), nl.
+										write('From Column'),read(Ci),
+										write('To Row'), read(Rf),
+										write('To Column'),read(Cf), nl.
 									
-moveShip(Board,Team,FinalBoard,1) :- 	moveShip_settings(Ri,Ci,Rf,Cf),
-									validMove(Board,Team,Ri,Ci,Rf,Cf,1),!,									
-									addControl(Board,Team,Rf,Cf,Tmp1),
-									placeShip(Tmp1,Team,Rf,Cf,1,Tmp2),
-									placeShip(Tmp2,Team,Ri,Ci,-1,FinalBoard).
+moveShip(Board,Pi,FinalBoard,Pf,1) :- 	moveShip_settings(Ri,Ci,Rf,Cf),
+										validMove(Board,Pi,Ri,Ci,Rf,Cf,1),!,									
+										addControl(Board,Pi,Rf,Cf,Tmp1,Pt),
+										placeShip(Tmp1,Rf,Cf,1,Tmp2),
+										placeShip(Tmp2,Ri,Ci,-1,FinalBoard),
+										playerMoveShip(Pt,[Ri|Ci],[Rf|Cf],Pf).
 				
-moveShip(Board,_,Board,0) :- 		nl,write('Movimento invalido!'), nl.
+moveShip(Board,P,Board,P,0) :- 		nl,write('Movimento invalido!'), nl.
 									
 									
 								
@@ -228,28 +262,30 @@ moveShip(Board,_,Board,0) :- 		nl,write('Movimento invalido!'), nl.
 
 clearscreen :- write('\e[2J').
 
-game_settings(Board,Name,Team) :- 	load, clearscreen,
-									board_settings(Board), 
-									player_settings(Name,Team).
+game_settings(Board,P1,P2) :- 	load, clearscreen,
+								board_settings(Board),
+								loadPlayers(Board,P1,P2).
 	
-make_move(Board,Team,FinalBoard) :-	moveShip(Board,Team,FinalBoard,1).
+make_move(Board,Pi,FinalBoard,Pf) :-	moveShip(Board,Pi,FinalBoard,Pf,1).
 
-make_move(Board,Team,FinalBoard) :- moveShip(Board,Team,Tmp,0), !,
-									make_move(Board,Team,FinalBoard).
+make_move(Board,Pi,FinalBoard,Pf) :- 	moveShip(Board,Pi,_,_,0), !,
+										make_move(Board,Pi,FinalBoard,Pf).
 									
-turn(Board,Team,FinalBoard) :- 		nl,write('NEW TURN - Team '), write(Team),nl,
+turn(Board,Pi,FinalBoard,Pf) :- 	nl,write('NEW TURN - '), 
+									displayTeamName(Pi),
 									displayBoard(Board),
-									make_move(Board,Team,FinalBoard).
+									displayPlayerInfo(Pi),
+									make_move(Board,Pi,FinalBoard,Pf).
 								
-play(Board) :- 	clearscreen,
-				turn(Board,1,Board2),
-				/*clearscreen,*/
-				turn(Board2,2,FinalBoard),
-				play(FinalBoard).
+play(Board,P1i,P2i,P1f,P2f) :- 	/*clearscreen,*/
+								turn(Board,P1i,BoardT,P1t),
+								/*clearscreen,*/
+								turn(BoardT,P2i,FinalBoard,P2t),
+								play(FinalBoard,P1t,P2t,P1f,P2f).
 				
 game :- clearscreen,
-		game_settings(Board,Name,Team),
-		play(Board).
+		game_settings(Board,P1,P2),
+		play(Board,P1,P2,P1f,P2f).
 
 
 

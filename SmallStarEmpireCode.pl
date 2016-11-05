@@ -7,7 +7,9 @@ load :- use_module(library(lists)).
 /************************
 *		MATRIX			*
 ************************/
-getCell(Mat,Row,Column,Value) :- nth1(Row, Mat, ARow), nth1(Column, ARow, Value).
+getCell(Mat,Row,Column,Value) :- nth1(Row, Mat, ARow), nth1(Column, ARow, Value).	%GET_CELL
+
+setCellValue(M,R,C,V,F) :-	setCell(M,R,C,1,1,V,[],F).								%SET_CELL_VALUE
 
 setCell([],_,_,_,_,_,F,F).
 setCell([L1|L2],R,C,Nr,Nc,V,T,Mf) :- 	R is Nr, ! , setCellRow(L1,C,Nc,V,[],Rf),
@@ -27,12 +29,18 @@ setCellRow([L1|L2],C,Nc,V,T,F) :- 	C is Nc ,!, append(T,[V|[]],T2),
 									
 setCellRow([L1|L2],C,Nc,V,T,F) :- 	append(T,[L1|[]],T2),
 									Nc1 = Nc + 1,
-									setCellRow(L2,C,Nc1,V,T2,F).
+									setCellRow(L2,C,Nc1,V,T2,F).		
 		
-displayM([L1|L2]) :- displayRow(L1),nl, displayM(L2).		
+displayM([L1|L2]) :- 	displayRow(L1),nl, displayM(L2).								%DISPLAY_MATRIX
 displayM([]).
-displayRow([L1|L2]) :- write(L1),displayRow(L2).
-displayRow([]).								 
+displayRow([L1|L2]) :- 	write(L1),displayRow(L2).
+displayRow([]).	
+
+addList(E,L1,L2) :- 	append(L1,[E|[]],L2).
+remList(E,L1,L2) :-		append(_Y,[E|_Z],L1),append(_Y,_Z,L2).
+setList(E,L1,C,L2) :- 	setCellRow(L1,C,1,E,[],L2).	
+getListElem(L1,P,E) :- 	nth1(P,L1,E).
+
 
 /************************
 *		CELL			*
@@ -129,8 +137,8 @@ displayInfo2([IDs|[IDp|[N|[]]]]) :- systemType(IDs,A,B), dominion(IDp,C,D), writ
 getBoardCell(B,R,C,V) :- getCell(B,R,1,X), X == 0 ,!,C1 is C + 1, getCell(B,R,C1,V).
 getBoardCell(B,R,C,V) :- getCell(B,R,C,V).
 
-setBoardCell(B,R,C,V,F) :- getCell(B,R,1,X), X == 0 ,!, C1 is C+1,setCell(B,R,C1,1,1,V,[],F).
-setBoardCell(B,R,C,V,F) :- setCell(B,R,C,1,1,V,[],F).
+setBoardCell(B,R,C,V,F) :- getCell(B,R,1,X), X == 0 ,!, C1 is C+1,setCellValue(B,R,C1,V,F).
+setBoardCell(B,R,C,V,F) :- setCellValue(B,R,C,V,F).
 
 /************************
 *		PLAYER			*
@@ -143,6 +151,18 @@ player_settings(Name,Team) :- 	write('PLAYER SETTINGS'),nl,
 								
 player1 :- [1,[],[],[]].
 player2 :- [2,[],[],[]].
+
+playerGetTeam([T|X],T).
+
+playerAddTrade(Pi,TPos,Pf) :- 	getListElem(Pi,2,Tr), addList(TPos,Tr,Trf), setList(Trf,Pi,2,Pf).
+playerAddColony(Pi,CPos,Pf) :- 	getListElem(Pi,3,C), addList(CPos,C,Cf), setList(Cf,Pi,3,Pf).
+playerAddShip(Pi,SPos,Pf) :- 	getListElem(Pi,4,S), addList(SPos,S,Sf), setList(Sf,Pi,4,Pf).
+
+playerRemShip(Pi,SPos,Pf) :-	getListElem(Pi,4,S), remList(Spos,S,Sf), setList(Sf,Pi,4,Pf).
+
+playerMoveShip(Pi,Sposi,Sposf,Pf) :-	playerRemShip(Pi,Sposi,Pt) , playerAddShip(Pt,Sposf,Pf).
+
+
 
 /************************
 *	GAME GETS & SETS	*
@@ -198,7 +218,7 @@ moveShip(Board,Team,FinalBoard,1) :- 	moveShip_settings(Ri,Ci,Rf,Cf),
 									placeShip(Tmp1,Team,Rf,Cf,1,Tmp2),
 									placeShip(Tmp2,Team,Ri,Ci,-1,FinalBoard).
 				
-moveShip(Board,_,Board,0) :- 		nl,write('Movimento invalido'), nl.
+moveShip(Board,_,Board,0) :- 		nl,write('Movimento invalido!'), nl.
 									
 									
 								

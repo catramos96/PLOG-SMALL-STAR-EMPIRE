@@ -141,11 +141,11 @@ player_settings(Name,Team) :- 	write('PLAYER SETTINGS'),nl,
 								write('Team (1,2): '), read(Team),
 								nl.
 								
-player(1,[],[],[]).				/*player(TEAM,LIST_TRADES,LIST_ROWS,LIST_SHIPS)*/
-player(2,[],[],[]).	
+player1 :- [1,[],[],[]].
+player2 :- [2,[],[],[]].
 
 /************************
-*	FUNCTIONALITIES		*
+*	GAME GETS & SETS	*
 ************************/
 placeShip(Board,Team,Row,Column,ShipsAdd,Final) :- 		getBoardCell(Board,Row,Column,[SystemId|[DominionId|[Ships|[]]]]) ,
 														NewShips is Ships+ShipsAdd,
@@ -170,10 +170,16 @@ hasShip(Board,Team,Row,Column,1) :- 	getBoardCell(Board,Row,Column,[SystemId|[Do
 											
 hasShip(_,_,_,_,0).
 											
-validMove(Board,Team,Row,Column,1) :- 	getBoardCell(Board,Row,Column,[_|[DominionId|_]]) ,
-										dominion(DominionId,Team,_).
+validMove(Board,Team,Ri,Ci,Rf,Cf,1) :- 	hasShip(Board,Team,Ri,Ci,1),!,		/*ship to move?*/	
+										getBoardCell(Board,Rf,Cf,[_|[DominionId|_]]) ,
+										(dominion(DominionId,Team,_) ; (DominionId is -1)).
 											
 validMove(_,_,_,_,0).									
+
+
+/************************
+*	FUNCTIONALITIES		*
+************************/
 
 addControl(Board,Team,Rf,Cf,Final) :- 	hasControl(Board,Rf,Cf,R2), R2 is 0, !,			/*has control?*/
 										write('Colony(C) or Trade(T)'),	read(Type),
@@ -181,19 +187,18 @@ addControl(Board,Team,Rf,Cf,Final) :- 	hasControl(Board,Rf,Cf,R2), R2 is 0, !,		
 
 addControl(Board,_,_,_,Board) :- write('No Control to add'), nl.									
 
-moveShip_settings(Ri,Ci,Rf,Cf) :- 	write('From Row'), read(Ri),
+moveShip_settings(Ri,Ci,Rf,Cf) :- 	nl, write('From Row'), read(Ri),
 									write('From Column'),read(Ci),
 									write('To Row'), read(Rf),
-									write('To Column'),read(Cf).
+									write('To Column'),read(Cf), nl.
 									
-moveShip(Board,Team,FinalBoard) :- 	moveShip_settings(Ri,Ci,Rf,Cf),
-									hasShip(Board,Team,Ri,Ci,R1), R1 is 1,!,		/*ship to move?*/								
+moveShip(Board,Team,FinalBoard,1) :- 	moveShip_settings(Ri,Ci,Rf,Cf),
+									validMove(Board,Team,Ri,Ci,Rf,Cf,1),!,									
 									addControl(Board,Team,Rf,Cf,Tmp1),
-									validMove(Tmp1,Team,Rf,Cf,R2), R2 is 1,!,
 									placeShip(Tmp1,Team,Rf,Cf,1,Tmp2),
 									placeShip(Tmp2,Team,Ri,Ci,-1,FinalBoard).
 				
-moveShip(Board,_,Board) :- 			write('Movimento invalido'), nl.
+moveShip(Board,_,Board,0) :- 		nl,write('Movimento invalido'), nl.
 									
 									
 								
@@ -207,14 +212,18 @@ game_settings(Board,Name,Team) :- 	load, clearscreen,
 									board_settings(Board), 
 									player_settings(Name,Team).
 		
-turn(Board,Team,FinalBoard) :- 		write('NEW TURN - Team '), write(Team), nl,
-									/*boardInfo,*/
-									displayBoard(Board),
-									moveShip(Board,Team,FinalBoard).
+turn(Board,Team,FinalBoard) :- 		moveShip(Board,Team,FinalBoard,1).
+									
+turn(Board,Team,FinalBoard) :- 		moveShip(Board,Team,Tmp,0), !,
+									turn(Board,Team,FinalBoard).
 								
 play(Board) :- 	clearscreen,
+				write('NEW TURN - Red Team'), nl,
+				displayBoard(Board),
 				turn(Board,1,Board2),
-				clearscreen,
+				/*clearscreen,*/
+				write('NEW TURN - Blue Team'), nl,
+				displayBoard(Board2),
 				turn(Board2,2,FinalBoard),
 				play(FinalBoard).
 				

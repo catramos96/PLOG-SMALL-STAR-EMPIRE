@@ -77,6 +77,10 @@ getBoardCell(B,R,C,V) :- R > 0, C > 0, getCell(B,R,1,X), X == 0 ,!,C1 is C + 1, 
 getBoardCell(B,R,C,V) :- R > 0, C > 0,getCell(B,R,C,V).
 getBoardCell(_,_,_,[]).
 
+getSystem([St|[D|[S|[]]]],St) :- systemType(St,_,_).
+getDominion([St|[D|[S|[]]]],D) :- dominion(D,_,_).
+getShips([St|[D|[S|[]]]],S).
+
 %SETS
 setBoardCell(B,R,C,V,F) :- R > 0, C > 0,getCell(B,R,1,X), X == 0 ,!, C1 is C+1,setCellValue(B,R,C1,V,F).
 setBoardCell(B,R,C,V,F) :- R > 0, C > 0,setCellValue(B,R,C,V,F).

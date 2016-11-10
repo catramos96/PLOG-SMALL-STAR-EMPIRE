@@ -66,8 +66,8 @@ verificar adjacentes as trades (+1 por cada inimigo adjacente)
 
 countPoints(_, [], _, _, _, _).
 countPoints(Board,[[R|C]|Lb],Points,AccR,AccB,PointsFinal) :- 	getBoardCell(Board,R,C,SystemType),
-																getSystemTypePoints(SystemType,P,AccB,AccR,NewAccB,NewAccR),/* %analisa o Value*/
-																PointsFinal = Points + P,
+																/*getSystemTypePoints(SystemType,P,AccB,AccR,NewAccB,NewAccR), %analisa o Value
+																PointsFinal = Points + P,*/
 																countPoints(Board,Lb,Points,NewAccB,NewAccR,PointsFinal) .		
 																
 getSystemTypePoints(SystemType,P,_,_,_,_) :- (SystemType == 1 ; SystemType == 2; SystemType == 3), systemType(SystemType,_,P).	

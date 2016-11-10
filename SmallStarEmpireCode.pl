@@ -27,16 +27,17 @@ turn(Board,Pi,FinalBoard,Pf) :- 	nl,write('NEW TURN - '),
 									/*displayPlayerInfo(Pi),*/
 									write("OLA"),nl.
 									/*make_move(Board,Pi,FinalBoard,Pf).*/
+									
+play(Board,P1i,P2i,P1f,P2f) :- 	clearscreen,
+								turn(Board,P1i,BoardT,P1t), !,
+								clearscreen,
+								turn(BoardT,P2i,FinalBoard,P2t), !,
+								play(FinalBoard,P1t,P2t,P1f,P2f).
 								
-play(Board,P1i,P2i,P1f,P2f,Board) :- 
-								turn(Board,P1i,Board,P1f),
-								turn(Board,P2i,Board,P2f).
-								/*play(FinalBoard,P1t,P2t,P1f,P2f).*/
-				
-game :- /*game_settings(Board,P1,P2),
-		play(Board,P1,P2,P1f,P2f,Bf),*/
-		board(4,Board),
-		winner(Board,[1,[],[[2,3],[2,1]],[]],[2,[],[[3,4],[4,3]],[]]).
+game :- game_settings(Board,P1,P2),
+		play(Board,P1,P2,P1f,P2f,Bf) .
+		/*board(4,Board),
+		winner(Board,[1,[],[[2,3],[2,1]],[]],[2,[],[[3,4],[4,3]],[]]).*/
 
 	
 winner(Board,P1,P2):- 	playerGetPoints(Board,P1,ListLength1,Points1), 

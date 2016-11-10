@@ -28,9 +28,9 @@ turn(Board,Pi,FinalBoard,Pf) :- 	nl,write('NEW TURN - '),
 									make_move(Board,Pi,FinalBoard,Pf).
 								
 play(Board,P1i,P2i,P1f,P2f) :- 	clearscreen,
-								turn(Board,P1i,BoardT,P1t),
+								turn(Board,P1i,BoardT,P1t), !,
 								clearscreen,
-								turn(BoardT,P2i,FinalBoard,P2t),
+								turn(BoardT,P2i,FinalBoard,P2t), !,
 								/*write('TURN END'), nl,
 								winner(FinalBoard,P1f,P2f),
 								write('END PLAY').*/

@@ -75,16 +75,12 @@ displayInfo2([IDs|[IDp|[N|[]]]]) :- systemType(IDs,_,_), dominion(IDp,_,_), writ
 %GETS
 getBoardCell(B,R,C,V) :- R > 0, C > 0, getCell(B,R,1,X), X == 0 ,!,C1 is C + 1, getCell(B,R,C1,V).
 getBoardCell(B,R,C,V) :- R > 0, C > 0,getCell(B,R,C,V).
-getBoardCell(_,_,_,[]).
-
-getSystem([St|[D|[S|[]]]],St) :- systemType(St,_,_).
-getDominion([St|[D|[S|[]]]],D) :- dominion(D,_,_).
-getShips([St|[D|[S|[]]]],S).
 
 %SETS
 setBoardCell(B,R,C,V,F) :- R > 0, C > 0,getCell(B,R,1,X), X == 0 ,!, C1 is C+1,setCellValue(B,R,C1,V,F).
 setBoardCell(B,R,C,V,F) :- R > 0, C > 0,setCellValue(B,R,C,V,F).
-setBoardCell(B,_,_,_,B).
+
+
 
 /* %DIRECTION
   |1| |2|
@@ -92,15 +88,25 @@ setBoardCell(B,_,_,_,B).
   |5| |6|
 */
 
-getCellDirection(B,Ri,Ci,1,Rf,Cf,V) :- directionAux(B,Ri,Ci,-1,-1,Rf,Cf), getBoardCell(B,Rf,Cf,V).
-getCellDirection(B,Ri,Ci,2,Rf,Cf,V) :- directionAux(B,Ri,Ci,-1,1,Rf,Cf), getBoardCell(B,Rf,Cf,V).
-getCellDirection(B,Ri,Ci,3,Ri,Cf,V) :- Cf is Ci-1, getBoardCell(B,Ri,Cf,V).
-getCellDirection(B,Ri,Ci,4,Ri,Cf,V)	:- Cf is Ci+1, getBoardCell(B,Ri,Cf,V).
-getCellDirection(B,Ri,Ci,5,Rf,Cf,V)	:- directionAux(B,Ri,Ci,1,-1,Rf,Cf), getBoardCell(B,Rf,Cf,V).
-getCellDirection(B,Ri,Ci,6,Rf,Cf,V)	:- directionAux(B,Ri,Ci,1,1,Rf,Cf), getBoardCell(B,Rf,Cf,V).
-getCellDirection(_,_,_,_,_,_,[]).
+test(B,Ri,Ci,Rf,Cf) :- 	testDirection(B,Ri,Ci,Rf,Cf,D), !,
+							testAux(B,Ri,Ci,Rf,Cf,D).
+test(_,_,_,_,_).
 
-directionAux(B,Ri,Ci,Rinc,Cinc,Rf,Cf) :- 	getCell(B,Ri,1,X), X == 0 ,!,
+testAux(B,Ri,Ci,Rf,Cf,D) :- getCellDirection(B,Ri,Ci,D,Rt,Ct,_), !,
+							((Rt is Rf , Ct is Cf);
+							 (testDirection(B,Rt,Ct,Rf,Cf,D),testAux(B,Rt,Ct,Rf,Cf,D))).
+							 
+
+
+
+getCellDirection(B,Ri,Ci,1,Rf,Cf) :- directionAux(B,Ri,Ci,-1,-1,Rf,Cf), getBoardCell(B,Rf,Cf,V).
+getCellDirection(B,Ri,Ci,2,Rf,Cf) :- directionAux(B,Ri,Ci,-1,1,Rf,Cf), getBoardCell(B,Rf,Cf,V).
+getCellDirection(B,Ri,Ci,3,Ri,Cf) :- Cf is Ci-1, getBoardCell(B,Ri,Cf,V).
+getCellDirection(B,Ri,Ci,4,Ri,Cf)	:- Cf is Ci+1, getBoardCell(B,Ri,Cf,V).
+getCellDirection(B,Ri,Ci,5,Rf,Cf)	:- directionAux(B,Ri,Ci,1,-1,Rf,Cf), getBoardCell(B,Rf,Cf,V).
+getCellDirection(B,Ri,Ci,6,Rf,Cf)	:- directionAux(B,Ri,Ci,1,1,Rf,Cf), getBoardCell(B,Rf,Cf,V).
+
+directionAux(B,Ri,Ci,Rinc,Cinc,Rf,Cf) :- 	getCell(B,Ri,1,0),!,
 											((Cinc is -1, Cf is Ci);
 											(Cf is Ci + 1)),
 											Rf is Ri + Rinc,
@@ -119,11 +125,30 @@ getAdjCells(B,Ri,Ci,F)	:- 	adjCellsAux(B,Ri,Ci,1,[],T1),
 							adjCellsAux(B,Ri,Ci,6,T5,F).
 
 
-adjCellsAux(B,Ri,Ci,D,T,F) :- 	getCellDirection(B,Ri,Ci,D,Rf,Cf,V),
-								V \= [],
-								append(T,[[Rf|Cf]|[]],F).
-								
+adjCellsAux(B,Ri,Ci,D,T,F) :- 	getCellDirection(B,Ri,Ci,D,Rf,Cf), !,
+								append(T,[[Rf|Cf]|[]],F).								
 adjCellsAux(_,_,_,_,T,T).
+
+testDirection(Board,Ri,Ci,Rf,Cf,D) :-	testDirectionAux(Board,Ri,Cinc), (
+										 (Rf < Ri, (
+													((Cf =< Ci - 1 + Cinc), D is 1) ; 
+													(Cf >= Ci + Cinc, D is 2)
+													)
+										);
+										 (Rf is Ri,(
+													(Cf < Ci, D is 3) ; 
+													(Cf > Ci, D is 4)	
+													)
+										);
+										 (Rf > Ri, (
+													((Cf =< Ci - 1 + Cinc), D is 5) ; 
+													((Cf >= Ci + Cinc), D is 6)
+													)
+										)
+										).
+	
+testDirectionAux(Board,Ri,1) :-	getCell(Board,Ri,1,0).
+testDirectionAux(_,_,0).									
 
 
 
@@ -145,6 +170,27 @@ systemType(4,'N','R').		%NebulaRed
 systemType(5,'N','B').		%NebulaBlue
 systemType(6,'H',' ').		%HomeWorld
 systemType(7,'B',' ').		
+
+%GETS
+getCellSystem([St|[_|[_|[]]]],St) :- systemType(St,_,_).
+getCellDominion([_|[D|[_|[]]]],D) :- dominion(D,_,_).
+getCellShips([_|[_|[S|[]]]],S).
+getCellTeam(Cell,Team) :- 	getCellDominion(Cell,D), dominion(D,Team,_).
+
+%SETS
+setCellSystem([_|[D|[S|[]]]],NewSt,[NewSt|[D|[S|[]]]]).
+setCellDominion([St|[_|[S|[]]]],NewD,[St|[NewD|[S|[]]]]).
+setCellShips([St|[D|[_|[]]]],NewS,[St|[D|[NewS|[]]]]).
+
+%INC
+incCellShips(Cell,NewCell) :- 	getCellShips(Cell,S),
+								NewS is S + 1,
+								setCellShips(Cell,NewS,NewCell).
+	
+%DEC	
+decCellShips(Cell,NewCell) :- 	getCellShips(Cell,S),
+								NewS is S - 1,
+								setCellShips(Cell,NewS,NewCell).
 
 %DISPLAY
 displayDominion(I) :- dominion(I,P,C), write(P), write(C).

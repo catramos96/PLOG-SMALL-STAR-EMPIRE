@@ -24,6 +24,12 @@ boardInfo :-
 			 write('NShips: 1-4'),nl,nl,nl .
 
 %TYPES
+board(0,[[0,0,0,0,0,[1,-1,0],[5,-1,0],[2,-1,0],[0,-1,0]],		%TESTE	
+		 [0,0,[4,-1,0],[6,0,4],[3,-1,0],[7,-1,0],[3,-1,0]],
+		 [0,[2,-1,0],[0,-1,0],[4,-1,0],[1,-1,0]],
+		 [[7,-1,0],[2,-1,0],[5,-1,0],[6,2,4],[4,-1,0]],
+		 [0,[3,-1,0],[5,-1,0],[0,-1,0],[4,-1,0]]]).
+		 
 board(1,[[0,[1,-1,0],[5,-1,0],[2,-1,0],[0,-1,0]],		%INICIAL		
 		 [[4,-1,0],[6,0,4],[3,-1,0],[7,-1,0],[3,-1,0]],
 		 [0,[2,-1,0],[0,-1,0],[4,-1,0],[1,-1,0]],
@@ -43,6 +49,7 @@ board(3,[[0,[1,2,0],[5,3,0],[2,0,1],[0,2,1]],			%FINAL_ENCURRALADO
 		 [0,[3,-1,0],[5,-1,0],[0,-1,0],[4,-1,0]]]).
 
 %DISPLAYS	 
+displayBoard(I) :- board(I,S) , displayBoard(S).
 displayBoard([L1|L2]) :- nl, displayTopLine(L1), displayMatrix2D([L1|L2]).
 
 displayMatrix2D([]) :- nl .
@@ -66,12 +73,54 @@ displayInfo1([IDs|_]) :- systemType(IDs,_,_), write('|'), displaySystem(IDs), wr
 displayInfo2([IDs|[IDp|[N|[]]]]) :- systemType(IDs,_,_), dominion(IDp,_,_), write('|'),displayDominion(IDp),(N == 0, write(' ');write(N)).
 
 %GETS
-getBoardCell(B,R,C,V) :- getCell(B,R,1,X), X == 0 ,!,C1 is C + 1, getCell(B,R,C1,V).
-getBoardCell(B,R,C,V) :- getCell(B,R,C,V).
+getBoardCell(B,R,C,V) :- R > 0, C > 0, getCell(B,R,1,X), X == 0 ,!,C1 is C + 1, getCell(B,R,C1,V).
+getBoardCell(B,R,C,V) :- R > 0, C > 0,getCell(B,R,C,V).
+getBoardCell(_,_,_,[]).
 
 %SETS
-setBoardCell(B,R,C,V,F) :- getCell(B,R,1,X), X == 0 ,!, C1 is C+1,setCellValue(B,R,C1,V,F).
-setBoardCell(B,R,C,V,F) :- setCellValue(B,R,C,V,F).
+setBoardCell(B,R,C,V,F) :- R > 0, C > 0,getCell(B,R,1,X), X == 0 ,!, C1 is C+1,setCellValue(B,R,C1,V,F).
+setBoardCell(B,R,C,V,F) :- R > 0, C > 0,setCellValue(B,R,C,V,F).
+setBoardCell(B,_,_,_,B).
+
+/* %DIRECTION
+  |1| |2|
+|3| |x| |4| Numbers - directions from cell 'x'
+  |5| |6|
+*/
+
+getCellDirection(B,Ri,Ci,1,Rf,Cf,V) :- directionAux(B,Ri,Ci,-1,-1,Rf,Cf), getBoardCell(B,Rf,Cf,V).
+getCellDirection(B,Ri,Ci,2,Rf,Cf,V) :- directionAux(B,Ri,Ci,-1,1,Rf,Cf), getBoardCell(B,Rf,Cf,V).
+getCellDirection(B,Ri,Ci,3,Ri,Cf,V) :- Cf is Ci-1, getBoardCell(B,Ri,Cf,V).
+getCellDirection(B,Ri,Ci,4,Ri,Cf,V)	:- Cf is Ci+1, getBoardCell(B,Ri,Cf,V).
+getCellDirection(B,Ri,Ci,5,Rf,Cf,V)	:- directionAux(B,Ri,Ci,1,-1,Rf,Cf), getBoardCell(B,Rf,Cf,V).
+getCellDirection(B,Ri,Ci,6,Rf,Cf,V)	:- directionAux(B,Ri,Ci,1,1,Rf,Cf), getBoardCell(B,Rf,Cf,V).
+getCellDirection(_,_,_,_,_,_,[]).
+
+directionAux(B,Ri,Ci,Rinc,Cinc,Rf,Cf) :- 	getCell(B,Ri,1,X), X == 0 ,!,
+											((Cinc is -1, Cf is Ci);
+											(Cf is Ci + 1)),
+											Rf is Ri + Rinc,
+											(Cf > 0) , (Rf > 0).
+													
+directionAux(_,Ri,Ci,Rinc,Cinc,Rf,Cf) :- 	((Cinc is -1, Cf is Ci - 1);
+											Cf is Ci ),
+											Rf is Ri + Rinc,
+											(Cf > 0) , (Rf > 0).
+											
+getAdjCells(B,Ri,Ci,F)	:- 	adjCellsAux(B,Ri,Ci,1,[],T1),
+							adjCellsAux(B,Ri,Ci,2,T1,T2),
+							adjCellsAux(B,Ri,Ci,3,T2,T3),
+							adjCellsAux(B,Ri,Ci,4,T3,T4),								
+							adjCellsAux(B,Ri,Ci,5,T4,T5),
+							adjCellsAux(B,Ri,Ci,6,T5,F).
+
+
+adjCellsAux(B,Ri,Ci,D,T,F) :- 	getCellDirection(B,Ri,Ci,D,Rf,Cf,V),
+								V \= [],
+								append(T,[[Rf|Cf]|[]],F).
+								
+adjCellsAux(_,_,_,_,T,T).
+
 
 /************************
 *		CELL			*

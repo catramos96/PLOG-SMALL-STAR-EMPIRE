@@ -94,23 +94,12 @@ setBoardCell(B,R,C,V,F) :- R > 0, C > 0,setCellValue(B,R,C,V,F).
   |5| |6|
 */
 
-test(B,Ri,Ci,Rf,Cf) :- 	testDirection(B,Ri,Ci,Rf,Cf,D), !,
-							testAux(B,Ri,Ci,Rf,Cf,D).
-test(_,_,_,_,_).
-
-testAux(B,Ri,Ci,Rf,Cf,D) :- getCellDirection(B,Ri,Ci,D,Rt,Ct,_), !,
-							((Rt is Rf , Ct is Cf);
-							 (testDirection(B,Rt,Ct,Rf,Cf,D),testAux(B,Rt,Ct,Rf,Cf,D))).
-							 
-
-
-
-getCellDirection(B,Ri,Ci,1,Rf,Cf) :- directionAux(B,Ri,Ci,-1,-1,Rf,Cf), getBoardCell(B,Rf,Cf,V).
-getCellDirection(B,Ri,Ci,2,Rf,Cf) :- directionAux(B,Ri,Ci,-1,1,Rf,Cf), getBoardCell(B,Rf,Cf,V).
-getCellDirection(B,Ri,Ci,3,Ri,Cf) :- Cf is Ci-1, getBoardCell(B,Ri,Cf,V).
-getCellDirection(B,Ri,Ci,4,Ri,Cf)	:- Cf is Ci+1, getBoardCell(B,Ri,Cf,V).
-getCellDirection(B,Ri,Ci,5,Rf,Cf)	:- directionAux(B,Ri,Ci,1,-1,Rf,Cf), getBoardCell(B,Rf,Cf,V).
-getCellDirection(B,Ri,Ci,6,Rf,Cf)	:- directionAux(B,Ri,Ci,1,1,Rf,Cf), getBoardCell(B,Rf,Cf,V).
+getCellDirection(B,Ri,Ci,1,Rf,Cf,Cell) :- directionAux(B,Ri,Ci,-1,-1,Rf,Cf), getBoardCell(B,Rf,Cf,Cell).
+getCellDirection(B,Ri,Ci,2,Rf,Cf,Cell) :- directionAux(B,Ri,Ci,-1,1,Rf,Cf), getBoardCell(B,Rf,Cf,Cell).
+getCellDirection(B,Ri,Ci,3,Ri,Cf,Cell) :- Cf is Ci-1, getBoardCell(B,Ri,Cf,Cell).
+getCellDirection(B,Ri,Ci,4,Ri,Cf,Cell)	:- Cf is Ci+1, getBoardCell(B,Ri,Cf,Cell).
+getCellDirection(B,Ri,Ci,5,Rf,Cf,Cell)	:- directionAux(B,Ri,Ci,1,-1,Rf,Cf), getBoardCell(B,Rf,Cf,Cell).
+getCellDirection(B,Ri,Ci,6,Rf,Cf,Cell)	:- directionAux(B,Ri,Ci,1,1,Rf,Cf), getBoardCell(B,Rf,Cf,Cell).
 
 directionAux(B,Ri,Ci,Rinc,Cinc,Rf,Cf) :- 	getCell(B,Ri,1,0),!,
 											((Cinc is -1, Cf is Ci);
@@ -132,7 +121,7 @@ getAdjCells(B,Ri,Ci,F)	:- 	adjCellsAux(B,Ri,Ci,1,[],T1),
 
 
 
-adjCellsAux(B,Ri,Ci,D,T,F) :- 	getCellDirection(B,Ri,Ci,D,Rf,Cf), !,
+adjCellsAux(B,Ri,Ci,D,T,F) :- 	getCellDirection(B,Ri,Ci,D,Rf,Cf,_), !,
 								append(T,[[Rf|Cf]|[]],F).								
 
 adjCellsAux(_,_,_,_,T,T).

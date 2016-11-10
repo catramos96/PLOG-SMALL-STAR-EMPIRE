@@ -15,7 +15,7 @@ clearscreen :- write('\e[2J').
 game_settings(Board,P1,P2) :- 	clearscreen,
 								board_settings(Board),
 								loadPlayers(Board,P1,P2).
-	
+								
 make_move(Board,Pi,FinalBoard,Pf) :-	moveShip(Board,Pi,FinalBoard,Pf,1).
 
 make_move(Board,Pi,FinalBoard,Pf) :- 	moveShip(Board,Pi,_,_,0), !,
@@ -25,19 +25,23 @@ turn(Board,Pi,FinalBoard,Pf) :- 	nl,write('NEW TURN - '),
 									displayTeamName(Pi),
 									displayBoard(Board),
 									displayPlayerInfo(Pi),
+
 make_move(Board,Pi,FinalBoard,Pf).
 									
-play(Board,P1i,P2i,P1f,P2f) :- 	clearscreen,
-								turn(Board,P1i,BoardT,P1t), !,
-								clearscreen,
-								turn(BoardT,P2i,FinalBoard,P2t), ! ,
-								/*winner(FinalBoard,P1t,P2t) .*/
-								play(FinalBoard,P1t,P2t,P1f,P2f).
+play(Board,P1i,P2i,P1f,P2f,FinalBoard) :- 	/*clearscreen,*/
+											turn(Board,P1i,BoardT1,P1t), !,
+											/*clearscreen,*/
+											turn(BoardT1,P2i,BoardT2,P2t), !,
+											play(BoardT2,P1t,P2t,P1f,P2f,FinalBoard).
 								
 game :- game_settings(Board,P1,P2),
-		play(Board,P1,P2,P1f,P2f) .
-		/*board(4,Board),
-		winner(Board,[1,[[2,3]],[[1,2],[4,3]],[]],[2,[],[[3,3],[3,4],[4,5],[5,4]],[]]) .*/
+		play(Board,P1,P2,P1f,P2f,Bf), !,
+		write('OUT'),
+		displayPlayerInfo(P1f), nl, !,
+		displayPlayerInfo(P2f), nl, !,
+		displayBoard(Bf), !,
+		/*board(4,Board),*/
+		winner(Bf,P1f,P2f).
 
 	
 winner(Board,P1,P2):- 	playerGetPoints(Board,P1,ListLength1,Points1), 

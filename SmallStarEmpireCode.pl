@@ -22,65 +22,72 @@ make_move(Board,Pi,FinalBoard,Pf) :- 	moveShip(Board,Pi,_,_,0), !,
 										make_move(Board,Pi,FinalBoard,Pf).
 									
 turn(Board,Pi,FinalBoard,Pf) :- 	nl,write('NEW TURN - '), 
-									displayTeamName(Pi),
+									/*displayTeamName(Pi),*/
 									displayBoard(Board),
-									displayPlayerInfo(Pi),
-									make_move(Board,Pi,FinalBoard,Pf).
+									/*displayPlayerInfo(Pi),*/
+									write("OLA"),nl.
+									/*make_move(Board,Pi,FinalBoard,Pf).*/
 								
-play(Board,P1i,P2i,P1f,P2f) :- 	clearscreen,
-								turn(Board,P1i,BoardT,P1t),
-								clearscreen,
-								turn(BoardT,P2i,FinalBoard,P2t),
-								/*write('TURN END'), nl,
-								winner(FinalBoard,P1f,P2f),
-								write('END PLAY').*/
-								play(FinalBoard,P1t,P2t,P1f,P2f).
-								/*displayBoard(FinalBoard), %faz ultimo display
-								winner(FinalBoard,P1t,P2t) .*/
+play(Board,P1i,P2i,P1f,P2f,Board) :- 
+								turn(Board,P1i,Board,P1f),
+								turn(Board,P2i,Board,P2f).
+								/*play(FinalBoard,P1t,P2t,P1f,P2f).*/
 				
-game :- game_settings(Board,P1,P2),
-		play(Board,P1,P2,P1f,P2f).
-
+game :- /*game_settings(Board,P1,P2),
+		play(Board,P1,P2,P1f,P2f,Bf),*/
+		board(4,Board),
+		winner(Board,[1,[],[[2,3],[2,1]],[]],[2,[],[[3,4],[4,3]],[]]).
 
 	
-winner(Board,P1,P2):- 	playerGetPoints(Board,P1,ShipsLength1,Points1),
-						playerGetPoints(Board,P2,ShipsLength2,Points2),
-						write('GOT POINTS'),nl, write(Points1) , nl,write(Points2), nl,
-						biggestTerritoryPoints(ShipsLength1, Points1, NewPoints1, ShipsLength2, Points2, NewPoints2), /*%verifica quem tem mais colonias e da mais 3 pontos a esse*/
-						write('EXTRA'),nl,
-						chooseWinner(P1, NewPoints1, P2, NewPoints2) .	
-
-playerGetPoints(Board,Player,ShipsLength,Points) :- playerTerritory(Player,TotalShips), length(TotalShips, ShipsLength),
-													countPoints(Board,TotalShips,0,0,0,Points). 	
+winner(Board,P1,P2):- 	playerGetPoints(Board,P1,ListLength1,Points1), 
+						playerGetPoints(Board,P2,ListLength2,Points2),
+						biggestTerritoryPoints(ListLength1, Points1, NewPoints1, ListLength2, Points2, NewPoints2), 
+						chooseWinner(P1, NewPoints1, P2, NewPoints2) .
+					
+playerGetPoints(Board,Player,ListLength,Points) :-  playerTerritory(Player,List), 
+													length(List,ListLength),
+													countPoints(Board,List,0,Points,0,0).
+	
 	
 playerTerritory(Player, List) :- getListElem(Player,2,Trade), getListElem(Player,3,Colony), append(Colony, Trade, List) .	
+
+/*se accR e ou accB: 1->+1; 2->+4; 3->+7; verificar adjacentes as trades (+1 por cada inimigo adjacente)*/
+countPoints(_,[],Points,FinalPoints,AccB, AccR) :- 	getNebulaePoints(Points, AccB, NewPoints),
+													getNebulaePoints(NewPoints, AccR, FinalPoints) .
+
+/*deve percorrer todos as colonia/trades: se 1,2 ou 3 soma; se 4 ou 5 coloca num acumulador*/
+countPoints(Board,[[R|[C|[]]]|Lb], AccPoints, FinalPoints, AccB, AccR) :-   getBoardCell(Board,R,C,[ID|_]), 
+																			getSystemTypePoints(ID,P,AccB,AccR,NewAccB,NewAccR), 
+																			/*getTradePoints(Board,R,C,Team,1,AccPoints),*/
+																			NewPoints is AccPoints + P , 
+																			countPoints(Board,Lb,NewPoints,FinalPoints, NewAccB, NewAccR) .
+																			
+getTradePoints(Board,R,C,Team,Acc,Points) :- Team == 1, Acc > 0, Acc < 7, 
+											getCellDirection(Board,R,C,Acc,_,_,[_|[2|_]]), 
+											NewPoints is Points + 1,
+											NewAcc is Acc + 1,
+											getTradePoints(Board,R,C,Team,NewAcc,NewPoints) .
+											
+getTradePoints(Board,R,C,Team,Acc,Points) :- Team == 2, Acc > 0, Acc < 7, 
+											getCellDirection(Board,R,C,Acc,_,_,[_|[1|_]]), 
+											NewPoints is Points + 1,
+											NewAcc is Acc + 1,
+											getTradePoints(Board,R,C,Team,NewAcc,NewPoints) .
+getTradePoints(_,_,_,_,_,Points) .
+																			
+getSystemTypePoints(ID,P, AccB,AccR, AccB,AccR) :- (ID == 1 ; ID == 2; ID == 3), systemType(ID,_,P).
+getSystemTypePoints(4,0,AccB,AccR,AccB,NewAccR) :- (NewAccR is AccR + 1) .
+getSystemTypePoints(5,0,AccB,AccR,NewAccB,AccR) :- (NewAccB is AccB + 1) .
+getSystemTypePoints(ID,0,AccB,AccR,AccB,AccR) .
+
+getNebulaePoints(Points, 0, Points).
+getNebulaePoints(Points, 1, NewPoints) :- NewPoints is Points + 1 .
+getNebulaePoints(Points, 2, NewPoints) :- NewPoints is Points + 4 .
+getNebulaePoints(Points, 3, NewPoints) :- NewPoints is Points + 7 .
 	
-/*%depois de percorrer a matriz:
-	se accR e ou accB: 1->+1; 2->+4; 3->+7;
-verificar adjacentes as trades (+1 por cada inimigo adjacente)
-
-
-%deve percorrer todos os ships:
-%	se 1,2 ou 3 soma
-%	se 4 ou 5 coloca num acumulador*/
-
-countPoints(_, [], _, _, _, _).
-countPoints(Board,[[R|C]|Lb],Points,AccR,AccB,PointsFinal) :- 	getBoardCell(Board,R,C,SystemType),
-																/*getSystemTypePoints(SystemType,P,AccB,AccR,NewAccB,NewAccR), %analisa o Value
-																PointsFinal = Points + P,*/
-																countPoints(Board,Lb,Points,NewAccB,NewAccR,PointsFinal) .		
-																
-getSystemTypePoints(SystemType,P,_,_,_,_) :- (SystemType == 1 ; SystemType == 2; SystemType == 3), systemType(SystemType,_,P).	
-														
-getSystemTypePoints(SystemType,_,AccB,AccR,NewAccB,NewAccR) :- 	(SystemType == 4, NewAccB = AccB + 1, NewAccR = AccR) ;
-																(SystemType == 5, NewAccR = AccR + 1, NewAccB = AccB) .
-																
-biggestTerritoryPoints(Ships1, Points1, NewPoints1, Ships2, Points2, NewPoints2) :- Ships1 > Ships2, 
-																					NewPoints1 = Points1 + 3, NewPoints2 = Points2.
-biggestTerritoryPoints(Ships1, Points1, NewPoints1, Ships2, Points2, NewPoints2) :- Ships1 < Ships2, 
-																					NewPoints1 = Points1, NewPoints2 = Points2 + 3 .
-biggestTerritoryPoints(Ships1, Points1, NewPoints1, Ships2, Points2, NewPoints2) :- Ships1 == Ships2, 
-																					NewPoints1 = Points1, NewPoints2 = Points2 .
+biggestTerritoryPoints(Length1, Points1, NewPoints1, Length2, Points2, Points2) :- Length1 > Length2, NewPoints1 is Points1 + 3.
+biggestTerritoryPoints(Length1, Points1, Points1, Length2, Points2, NewPoints2) :- Length1 < Length2 , NewPoints2 is Points2 + 3 .
+biggestTerritoryPoints(Length1, Points1, Points1, Length2, Points2, Points2) :- Length1 == Length2 .															
 																					
 chooseWinner(_, Points, _, Points)	:-	nl,write('DRAW!').	
 chooseWinner(P1, Points1,_, Points2) :-   Points1 > Points2, displayWinner(P1, Points1).

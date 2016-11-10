@@ -122,6 +122,7 @@ adjCellsAux(B,Ri,Ci,D,T,F) :- 	getCellDirection(B,Ri,Ci,D,Rf,Cf,V),
 adjCellsAux(_,_,_,_,T,T).
 
 
+
 /************************
 *		CELL			*
 ************************/

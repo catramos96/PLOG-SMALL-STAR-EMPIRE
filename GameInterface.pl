@@ -6,8 +6,6 @@ clearscreen :- write('\e[2J').
 
 %INPUTS
 
-teste(X) :- write('insert'),read(input),get_char(Input,X).
-
 game_settings(Board,P1,P2) :- 	/*clearscreen,*/
 								board_settings(Board),
 								loadPlayers(Board,P1,P2).

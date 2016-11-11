@@ -14,6 +14,7 @@ loadPlayers(Board,P1,P2) :- 	getCell(Board,R1,C1,[6,0,N1]),
 								
 turn(Mode,Board,Pi,FinalBoard,Pf) :- 	updateValidShips(Board,Pi,Pt1), !,
 										getPossibleMoves(Board,Pt1,M), !,
+										M \= [],									/*Game Over if M = []*/
 										displayTurn(Board,Pt1,M), 
 										make_move(Mode,Board,M,Pt1,FinalBoard,Pf).
 		
@@ -42,8 +43,4 @@ addControl(Board,Pi,Rf,Cf,Final,Pf) :- 	error(2), addControl(Board,Pi,Rf,Cf,Fina
 movement(0,Ri,Ci,Rf,Cf) :- moveShip_settings(Ri,Ci,Rf,Cf).				%PERSON
 movement(0,Ri,Ci,Rf,Cf) :- error(4), moveShip_settings(Ri,Ci,Rf,Cf).
 
-movement(Mode,Ri,Ci,Rf,Cf) :- Mode == 1 .								%COMPUTER
-
-	
-
-gameOver(Player1,Player2) :- playerGetShips(Player1,[]) ; playerGetShips(Player2,[]).
+movement(1,_,_,_,_).								%COMPUTER

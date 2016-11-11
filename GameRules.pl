@@ -19,7 +19,7 @@ validMove(M,Pi,Ri,Ci,Rf,Cf) :- 	playerGetShips(Pi,Ships),				/*Get Ships*/
 										getListElem(M,Pos,ShipsMoves),			/*Get Move for Ship Position*/
 										getListElem(ShipsMoves,_,[Rf|[Cf|[]]]).	/*Check if the final Position is in the possibles moves list*/
 										
-validMove(M,Pi,Ri,Ci,Rf,Cf) :- 	error(1), fail.
+validMove(_,_,_,_,_,_) :- 	error(1), fail.
 
 
 

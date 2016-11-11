@@ -20,7 +20,7 @@ setDominion(Board,_,_,_,_,Board).
 
 %CONFIRMATION												
 hasShip(Pi,Row,Column) :- 	playerGetShips(Pi,S),
-								member([Row|Column],S).
+								member([Row|[Column|[]]],S).
 											
 validMove(Board,Pi,Ri,Ci,Rf,Cf) :- 	hasShip(Pi,Ri,Ci), !,
 									isCellFree(Board,Rf,Cf),
@@ -44,7 +44,7 @@ isCellFree(Board,Row,Column) :- getBoardCell(Board,Row,Column,Cell), getCellDomi
 updateValidShips(Board,Player,FinalPlayer) :- playerGetShips(Player,Ships),validShips(Board,Player,Ships,FinalPlayer).
 
 validShips(_,P,[],P).
-validShips(Board,Player,[S|Sn],FinalPlayer) :- 	getPosition(S,R,C), playerGetTeam(Player,Team),
+validShips(Board,Player,[S|Sn],FinalPlayer) :- 	getPosition(S,R,C), playerGetTeam(Player,Team), write('here'),
 												getAdjFreeCells(Board,R,C,Team,[]), !,
 												playerRemShip(Player,S,PlayerT), validShips(Board,PlayerT,Sn,FinalPlayer).
 validShips(Board,Player,[_|Sn],FinalPlayer) :- 	validShips(Board,Player,Sn,FinalPlayer).

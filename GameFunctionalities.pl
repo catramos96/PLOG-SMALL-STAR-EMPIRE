@@ -22,12 +22,16 @@ addControl(Board,Pi,Rf,Cf,Final,Pf) :- 	write('Colony(C) or Trade(T)'),	read(Typ
 										playerAddControl(Pi,Type,[Rf|Cf],Pf).
 										
 addControl(Board,Pi,_,_,Board,Pi) :- 	nl,write('No Control to add'), nl .	
-									
-moveShip(Board,Pi,FinalBoard,Pf,1) :- 	moveShip_settings(Ri,Ci,Rf,Cf), 
-										validMove(Board,Pi,Ri,Ci,Rf,Cf),!,									
-										addControl(Board,Pi,Rf,Cf,Tmp1,Pt),
-										setShip(Tmp1,Rf,Cf,1,Tmp2),
-										setShip(Tmp2,Ri,Ci,-1,FinalBoard),
-										playerSetShip(Pt,[Ri|Ci],[Rf|Cf],Pf).
+			
+movement(Mode,Ri,Ci,Rf,Cf) :- Mode == 0, moveShip_settings(Ri,Ci,Rf,Cf).
+
+movement(Mode,Ri,Ci,Rf,Cf) :- Mode == 1 .
+			
+moveShip(Mode,Board,Pi,FinalBoard,Pf,1) :- 	movement(Mode,Ri,Ci,Rf,Cf), 
+											validMove(Board,Pi,Ri,Ci,Rf,Cf),!,									
+											addControl(Board,Pi,Rf,Cf,Tmp1,Pt),
+											setShip(Tmp1,Rf,Cf,1,Tmp2),
+											setShip(Tmp2,Ri,Ci,-1,FinalBoard),
+											playerSetShip(Pt,[Ri|Ci],[Rf|Cf],Pf).
 				
 moveShip(Board,P,Board,P,0) :- 	nl,write('Movimento invalido!'), nl .

@@ -16,33 +16,51 @@ game_settings(Board,P1,P2) :- 	clearscreen,
 								board_settings(Board),
 								loadPlayers(Board,P1,P2).
 								
-make_move(Board,Pi,FinalBoard,Pf) :-	moveShip(Board,Pi,FinalBoard,Pf,1).
+make_move(Mode, Board,Pi,FinalBoard,Pf) :-	moveShip(Mode, Board,Pi,FinalBoard,Pf,1).
 
-make_move(Board,Pi,FinalBoard,Pf) :- 	moveShip(Board,Pi,_,_,0), !,
-										make_move(Board,Pi,FinalBoard,Pf).
+make_move(Mode, Board,Pi,FinalBoard,Pf) :- 	moveShip(Mode, Board,Pi,_,_,0), !,
+											make_move(Mode, Board,Pi,FinalBoard,Pf).
 									
-turn(Board,Pi,FinalBoard,Pf) :- 	nl,write('NEW TURN - '), 
+turn(Mode,Board,Pi,FinalBoard,Pf) :- nl,write('NEW TURN - '), 
 									displayTeamName(Pi),
 									displayBoard(Board),
 									displayPlayerInfo(Pi),
+									make_move(Mode,Board,Pi,FinalBoard,Pf).
 
-make_move(Board,Pi,FinalBoard,Pf).
-									
-play(Board,P1i,P2i,P1f,P2f,FinalBoard) :- 	/*clearscreen,*/
-											turn(Board,P1i,BoardT1,P1t), !,
+/*Humano vs. Humano : opcao 1*/									
+play(1,Board,P1i,P2i,P1f,P2f,FinalBoard) :- /*clearscreen,*/
+											turn(0,Board,P1i,BoardT1,P1t), !,
 											/*clearscreen,*/
-											turn(BoardT1,P2i,BoardT2,P2t), !,
+											turn(0,BoardT1,P2i,BoardT2,P2t), !,
 											play(BoardT2,P1t,P2t,P1f,P2f,FinalBoard).
-								
+
+/*Humano vs. Maquina : opcao 2*/									
+play(2,Board,P1i,P2i,P1f,P2f,FinalBoard) :- /*clearscreen,*/
+											turn(0,Board,P1i,BoardT1,P1t), !,
+											/*clearscreen,*/
+											turn(1,BoardT1,P2i,BoardT2,P2t), !,
+											play(BoardT2,P1t,P2t,P1f,P2f,FinalBoard).
+	
+/*Maquina vs. Maquina : opcao 3*/									
+play(2,Board,P1i,P2i,P1f,P2f,FinalBoard) :- /*clearscreen,*/
+											turn(1,Board,P1i,BoardT1,P1t), !,
+											/*clearscreen,*/
+											turn(1,BoardT1,P2i,BoardT2,P2t), !,
+											play(BoardT2,P1t,P2t,P1f,P2f,FinalBoard).
+	
+	
+getAllFreeCells(Board,Board,1,1,[],List),
+			
 game :- game_settings(Board,P1,P2),
-		play(Board,P1,P2,P1f,P2f,Bf), !,
+		play(1,Board,P1,P2,P1f,P2f,Bf), !,
 		write('OUT'),
 		displayPlayerInfo(P1f), nl, !,
 		displayPlayerInfo(P2f), nl, !,
 		displayBoard(Bf), !,
 		/*board(4,Board),*/
 		winner(Bf,P1f,P2f).
-
+		
+/* ================================================================================ */
 	
 winner(Board,P1,P2):- 	playerGetPoints(Board,P1,ListLength1,Points1), 
 						playerGetPoints(Board,P2,ListLength2,Points2),

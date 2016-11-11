@@ -87,7 +87,6 @@ setBoardCell(B,R,C,V,F) :- R > 0, C > 0,getCell(B,R,1,X), X == 0 ,!, C1 is C+1,s
 setBoardCell(B,R,C,V,F) :- R > 0, C > 0,setCellValue(B,R,C,V,F).
 
 
-
 /* %DIRECTION
   |1| |2|
 |3| |x| |4| Numbers - directions from cell 'x'
@@ -97,9 +96,9 @@ setBoardCell(B,R,C,V,F) :- R > 0, C > 0,setCellValue(B,R,C,V,F).
 getCellDirection(B,Ri,Ci,1,Rf,Cf,Cell) :- directionAux(B,Ri,Ci,-1,-1,Rf,Cf), getBoardCell(B,Rf,Cf,Cell).
 getCellDirection(B,Ri,Ci,2,Rf,Cf,Cell) :- directionAux(B,Ri,Ci,-1,1,Rf,Cf), getBoardCell(B,Rf,Cf,Cell).
 getCellDirection(B,Ri,Ci,3,Ri,Cf,Cell) :- Cf is Ci-1, getBoardCell(B,Ri,Cf,Cell).
-getCellDirection(B,Ri,Ci,4,Ri,Cf,Cell)	:- Cf is Ci+1, getBoardCell(B,Ri,Cf,Cell).
-getCellDirection(B,Ri,Ci,5,Rf,Cf,Cell)	:- directionAux(B,Ri,Ci,1,-1,Rf,Cf), getBoardCell(B,Rf,Cf,Cell).
-getCellDirection(B,Ri,Ci,6,Rf,Cf,Cell)	:- directionAux(B,Ri,Ci,1,1,Rf,Cf), getBoardCell(B,Rf,Cf,Cell).
+getCellDirection(B,Ri,Ci,4,Ri,Cf,Cell) :- Cf is Ci+1, getBoardCell(B,Ri,Cf,Cell).
+getCellDirection(B,Ri,Ci,5,Rf,Cf,Cell) :- directionAux(B,Ri,Ci,1,-1,Rf,Cf), getBoardCell(B,Rf,Cf,Cell).
+getCellDirection(B,Ri,Ci,6,Rf,Cf,Cell) :- directionAux(B,Ri,Ci,1,1,Rf,Cf), getBoardCell(B,Rf,Cf,Cell).
 
 directionAux(B,Ri,Ci,Rinc,Cinc,Rf,Cf) :- 	getCell(B,Ri,1,0),!,
 											((Cinc is -1, Cf is Ci);
@@ -145,8 +144,23 @@ testDirection(Board,Ri,Ci,Rf,Cf,D) :-	testDirectionAux(Board,Ri,Cinc), (
 										).
 	
 testDirectionAux(Board,Ri,1) :-	getCell(Board,Ri,1,0).
-testDirectionAux(_,_,0).									
+testDirectionAux(_,_,0).		
 
+/*===========================================*/
+
+checkEmptyList([_|[-1|_]], Position, ListBefore, ListAfter) :- 	append(ListBefore,Position,ListAfter) .
+checkEmptyList(_, _, List, List).						
+
+getAllFreeCellsRow(Board,R,C,List,FinalList) :-	getBoardCell(Board,1,C,Value), !,
+												checkEmptyList(Value,[[R|C]|[]],List,TempList),
+												Cnext is C + 1,
+												getAllFreeCellsRow(Board,R,Cnext,TempList,FinalList) .
+getAllFreeCellsRow(_,_,_,List,List).
+
+getAllFreeCells(_,[],_,_,List,List).
+getAllFreeCells(Board,[A|B],R,C,List,FinalList) :-  getAllFreeCellsRow(Board,R,C,List,TempList), !,
+													Rnext is R + 1,
+													getAllFreeCells(Board,B,Rnext,1,TempList,FinalList) .
 
 
 /************************

@@ -21,7 +21,7 @@ playerGetTeam([T|_],T).
 playerGetShips(Pi,S) :- getListElem(Pi,4,S).
 getPosition([R|[C|[]]],R,C).
 getPosition([],-1,-1).
-
+playerTerritory(Player, List) :- getListElem(Player,2,Trade), getListElem(Player,3,Colony), append(Colony, Trade, List) .	
 
 %SETS
 playerSetShip(Pi,SPosi,SPosf,Pf) :-	playerRemShip(Pi,SPosi,Pt) , playerAddShip(Pt,SPosf,Pf).

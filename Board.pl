@@ -166,7 +166,7 @@ getAllFreeCellsInDirection(B,R,C,D,T,Tmp,F) :- 	freeCellInDirection(B,T,R,C,D,Rf
 getAllFreeCellsInDirection(_,_,_,_,_,F,F).
 										
 
-/*===========================================*/
+/*===========================================
 
 checkEmptyList([_|[-1|_]], Position, ListBefore, ListAfter) :- 	append(ListBefore,Position,ListAfter) .
 checkEmptyList(_, _, List, List).						
@@ -180,7 +180,7 @@ getAllFreeCellsRow(_,_,_,List,List).
 getAllFreeCells(_,[],_,_,List,List).
 getAllFreeCells(Board,[A|B],R,C,List,FinalList) :-  getAllFreeCellsRow(Board,R,C,List,TempList), !,
 													Rnext is R + 1,
-													getAllFreeCells(Board,B,Rnext,1,TempList,FinalList) .
+													getAllFreeCells(Board,B,Rnext,1,TempList,FinalList) .*/
 
 /************************
 *		CELL			*

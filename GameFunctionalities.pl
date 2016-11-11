@@ -20,14 +20,14 @@ turn(Mode,Board,Pi,FinalBoard,Pf) :- 	updateValidShips(Board,Pi,Pt1), !,
 		
 		
 		
-make_move(Mode, Board,M,Pi,FinalBoard,Pf) :-	movement(Mode,Ri,Ci,Rf,Cf), !,								%SUCCESS
+make_move(Mode,Board,M,Pi,FinalBoard,Pf) :-		movement(Mode,Ri,Ci,Rf,Cf), !,								%SUCCESS
 												validMove(M,Pi,Ri,Ci,Rf,Cf), !,							
 												addControl(Board,Pi,Rf,Cf,Tmp1,Pt), !,
 												setShip(Tmp1,Rf,Cf,1,Tmp2), !,
 												setShip(Tmp2,Ri,Ci,-1,FinalBoard), !,
 												playerSetShip(Pt,[Ri|[Ci|[]]],[Rf|[Cf|[]]],Pf).	
 												
-make_move(Mode, Board,M,Pi,FinalBoard,Pf) :- 	make_move(Mode, Board,M,Pi,FinalBoard,Pf).	%FAIL
+make_move(Mode,Board,M,Pi,FinalBoard,Pf) :- 	make_move(Mode, Board,M,Pi,FinalBoard,Pf).	%FAIL
 							
 							
 										

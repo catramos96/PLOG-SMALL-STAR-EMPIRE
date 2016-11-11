@@ -19,6 +19,7 @@ playerAddBaseShips(Pi,_,_,Pi).
 %GETS	
 playerGetTeam([T|_],T).
 playerGetShips(Pi,S) :- getListElem(Pi,4,S).
+getPosition([R|[C|[]]],R,C).
 
 %SETS
 playerSetShip(Pi,SPosi,SPosf,Pf) :-	playerRemShip(Pi,SPosi,Pt) , playerAddShip(Pt,SPosf,Pf).
@@ -35,7 +36,7 @@ playerAddColony(Pi,CPos,Pf) :- 	getListElem(Pi,3,C), addList(CPos,C,Cf), setList
 playerAddShip(Pi,SPos,Pf) :- 	getListElem(Pi,4,S), addList(SPos,S,Sf), setList(Sf,Pi,4,Pf).
 
 %REMOVE
-playerRemShip(Pi,SPos,Pf) :-	getListElem(Pi,4,S), remList(SPos,S,Sf), setList(Sf,Pi,4,Pf).	
+playerRemShip(Pi,SPos,Pf) :-	playerGetShips(Pi,S), remList(SPos,S,Sf), setList(Sf,Pi,4,Pf).	
 
 %DISPLAYS
 displayTeamName(P) :- 	playerGetTeam(P,T), T is 1, !,

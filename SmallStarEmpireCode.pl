@@ -28,14 +28,27 @@ turn(Board,Pi,FinalBoard,Pf) :- 	nl,write('NEW TURN - '),
 
 make_move(Board,Pi,FinalBoard,Pf).
 									
-play(Board,P1i,P2i,P1f,P2f,FinalBoard) :- 	/*clearscreen,*/
-											turn(Board,P1i,BoardT1,P1t), !,
-											/*clearscreen,*/
-											turn(BoardT1,P2i,BoardT2,P2t), !,
-											play(BoardT2,P1t,P2t,P1f,P2f,FinalBoard).
+play(Board,1,P1i,P2i,P1f,P2f,FinalBoard) :- 	/*clearscreen,*/
+												turn(Board,P1i,BoardT,P1t), !,
+												gameOver(BoardT,P1t,P2i,R),
+												(	(R is 0 , play(BoardT,2,P1t,P2i,P1f,P2f,FinalBoard));
+													(P1f is P1t, P2f is P2i,BoardT is FinalBoard)
+												).
+												
+												/*clearscreen,
+												turn(BoardT1,P2i,BoardT2,P2t), !,
+												gameOver(Board,P1t,P2t),
+												play(BoardT2,P1t,P2t,P1f,P2f,FinalBoard).*/
+												
+play(Board,2,P1i,P2i,P1f,P2f,FinalBoard) :- 	/*clearscreen,*/
+												turn(Board,P2i,BoardT,P2t), !,
+												gameOver(BoardT,P1i,P2t,R),
+												(	(R is 0 , play(BoardT,2,P1i,P2t,P1f,P2f,FinalBoard));
+													(P1f is P1i, P2f is P2t,BoardT is FinalBoard)
+												).
 								
 game :- game_settings(Board,P1,P2),
-		play(Board,P1,P2,P1f,P2f,Bf), !,
+		play(Board,1,P1,P2,P1f,P2f,Bf), !,
 		write('OUT'),
 		displayPlayerInfo(P1f), nl, !,
 		displayPlayerInfo(P2f), nl, !,

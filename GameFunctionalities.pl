@@ -30,4 +30,4 @@ moveShip(Board,Pi,FinalBoard,Pf,1) :- 	moveShip_settings(Ri,Ci,Rf,Cf),
 										setShip(Tmp2,Ri,Ci,-1,FinalBoard),
 										playerSetShip(Pt,[Ri|Ci],[Rf|Cf],Pf).
 				
-moveShip(Board,P,Board,P,0) :- 	nl,write('Movimento invalido!'), nl .
+moveShip(Board,P,Board,P,0) :- 	nl,write('Movimento invalido!'), nl.

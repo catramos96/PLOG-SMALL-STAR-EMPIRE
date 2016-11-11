@@ -24,11 +24,6 @@ boardInfo :-
 			 write('NShips: 1-4'),nl,nl,nl .
 
 %TYPES
-board(0,[[0,0,0,0,0,[1,-1,0],[5,-1,0],[2,-1,0],[0,-1,0]],		%TESTE	
-		 [0,0,[4,-1,0],[6,0,4],[3,-1,0],[7,-1,0],[3,-1,0]],
-		 [0,[2,-1,0],[0,-1,0],[4,-1,0],[1,-1,0]],
-		 [[7,-1,0],[2,-1,0],[5,-1,0],[6,2,4],[4,-1,0]],
-		 [0,[3,-1,0],[5,-1,0],[0,-1,0],[4,-1,0]]]).
 		 
 board(1,[[0,[1,-1,0],[5,-1,0],[2,-1,0],[0,-1,0]],		%INICIAL		
 		 [[4,-1,0],[6,0,4],[3,-1,0],[7,-1,0],[3,-1,0]],
@@ -79,12 +74,17 @@ displayInfo1([IDs|_]) :- systemType(IDs,_,_), write('|'), displaySystem(IDs), wr
 displayInfo2([IDs|[IDp|[N|[]]]]) :- systemType(IDs,_,_), dominion(IDp,_,_), write('|'),displayDominion(IDp),(N == 0, write(' ');write(N)).
 
 %GETS
-getBoardCell(B,R,C,V) :- R > 0, C > 0, getCell(B,R,1,X), X == 0 ,!,C1 is C + 1, getCell(B,R,C1,V).
-getBoardCell(B,R,C,V) :- R > 0, C > 0,getCell(B,R,C,V).
+getBoardCell(B,R,C,V) :- getCell(B,R,1,X), X == 0 ,!,C1 is C + 1, getCell(B,R,C1,V).
+getBoardCell(B,R,C,V) :- getCell(B,R,C,V).
 
 %SETS
-setBoardCell(B,R,C,V,F) :- R > 0, C > 0,getCell(B,R,1,X), X == 0 ,!, C1 is C+1,setCellValue(B,R,C1,V,F).
-setBoardCell(B,R,C,V,F) :- R > 0, C > 0,setCellValue(B,R,C,V,F).
+setBoardCell(B,R,C,V,F) :- getCell(B,R,1,X), X == 0 ,!, C1 is C+1,setCellValue(B,R,C1,V,F).
+setBoardCell(B,R,C,V,F) :- setCellValue(B,R,C,V,F).
+
+%CONFIRMATION
+
+isBoardEmpty(B,0) :- member(S,X),member(X,[_,-1,0]).
+isBoardEmpty(_,1).
 
 
 

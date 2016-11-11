@@ -43,11 +43,11 @@ board(3,[[0,[1,2,0],[5,3,0],[2,0,1],[0,2,1]],			%FINAL_ENCURRALADO
 		 [[7,-1,0],[2,2,0],[5,2,0],[6,2,0],[4,3,1]],
 		 [0,[3,-1,0],[5,-1,0],[0,-1,0],[4,-1,0]]]).
 		 
-board(4,[[0,[1,-1,0],[5,0,1],[2,-1,0],[0,-1,0]],		%TESTEINES		
-		 [[4,-1,0],[6,0,4],[3,1,1],[7,-1,0],[3,-1,0]],
-		 [0,[2,-1,0],[0,-1,0],[4,2,1],[1,2,1]],
-		 [[7,-1,0],[2,-1,0],[5,0,1],[6,2,4],[4,2,1]],
-		 [0,[3,-1,0],[5,-1,0],[0,-1,0],[4,2,1]]]).
+board(4,[[0,[1,-1,0],[5,-1,0],[2,-1,0],[0,-1,0]],		%TESTEINES		
+		 [[4,0,1],[6,0,4],[3,0,1],[7,-1,0],[3,-1,0]],
+		 [0,[2,-1,0],[0,-1,0],[4,-1,0],[1,2,1]],
+		 [[7,-1,0],[2,-1,0],[5,2,1],[6,2,4],[4,-1,0]],
+		 [0,[3,-1,0],[5,-1,0],[0,-1,0],[4,-1,0]]]).
 
 %DISPLAYS	 
 displayBoard(I) :- board(I,S) , displayBoard(S).
@@ -83,7 +83,7 @@ setBoardCell(B,R,C,V,F) :- setCellValue(B,R,C,V,F).
 
 %CONFIRMATION
 
-isBoardEmpty(B,0) :- member(S,X),member(X,[_,-1,0]).
+isBoardEmpty(B,0) :- member(B,X),member(X,[_,-1,0]).
 isBoardEmpty(_,1).
 
 
@@ -94,12 +94,12 @@ isBoardEmpty(_,1).
   |5| |6|
 */
 
-getCellDirection(B,Ri,Ci,1,Rf,Cf,Cell) :- directionAux(B,Ri,Ci,-1,-1,Rf,Cf), getBoardCell(B,Rf,Cf,Cell).
-getCellDirection(B,Ri,Ci,2,Rf,Cf,Cell) :- directionAux(B,Ri,Ci,-1,1,Rf,Cf), getBoardCell(B,Rf,Cf,Cell).
-getCellDirection(B,Ri,Ci,3,Ri,Cf,Cell) :- Cf is Ci-1, getBoardCell(B,Ri,Cf,Cell).
-getCellDirection(B,Ri,Ci,4,Ri,Cf,Cell)	:- Cf is Ci+1, getBoardCell(B,Ri,Cf,Cell).
-getCellDirection(B,Ri,Ci,5,Rf,Cf,Cell)	:- directionAux(B,Ri,Ci,1,-1,Rf,Cf), getBoardCell(B,Rf,Cf,Cell).
-getCellDirection(B,Ri,Ci,6,Rf,Cf,Cell)	:- directionAux(B,Ri,Ci,1,1,Rf,Cf), getBoardCell(B,Rf,Cf,Cell).
+getCellInDirection(B,Ri,Ci,1,Rf,Cf,Cell) :- directionAux(B,Ri,Ci,-1,-1,Rf,Cf), getBoardCell(B,Rf,Cf,Cell).	%GET_CELL_IN_DIRECTION
+getCellInDirection(B,Ri,Ci,2,Rf,Cf,Cell) :- directionAux(B,Ri,Ci,-1,1,Rf,Cf), getBoardCell(B,Rf,Cf,Cell).
+getCellInDirection(B,Ri,Ci,3,Ri,Cf,Cell) :- Cf is Ci-1, getBoardCell(B,Ri,Cf,Cell).
+getCellInDirection(B,Ri,Ci,4,Ri,Cf,Cell)	:- Cf is Ci+1, getBoardCell(B,Ri,Cf,Cell).
+getCellInDirection(B,Ri,Ci,5,Rf,Cf,Cell)	:- directionAux(B,Ri,Ci,1,-1,Rf,Cf), getBoardCell(B,Rf,Cf,Cell).
+getCellInDirection(B,Ri,Ci,6,Rf,Cf,Cell)	:- directionAux(B,Ri,Ci,1,1,Rf,Cf), getBoardCell(B,Rf,Cf,Cell).
 
 directionAux(B,Ri,Ci,Rinc,Cinc,Rf,Cf) :- 	getCell(B,Ri,1,0),!,
 											((Cinc is -1, Cf is Ci);
@@ -111,41 +111,55 @@ directionAux(_,Ri,Ci,Rinc,Cinc,Rf,Cf) :- 	((Cinc is -1, Cf is Ci - 1);
 											Cf is Ci ),
 											Rf is Ri + Rinc,
 											(Cf > 0) , (Rf > 0).
+
+getAdjFreeCells(B,R,C,T,F) :- getAdjFreeCellsAux(B,R,C,1,T,[],T1), !,										%GET_ADJ_FREE_CELLS
+								getAdjFreeCellsAux(B,R,C,2,T,T1,T2), !,
+								getAdjFreeCellsAux(B,R,C,3,T,T2,T3), !,
+								getAdjFreeCellsAux(B,R,C,4,T,T3,T4), !,
+								getAdjFreeCellsAux(B,R,C,5,T,T4,T5), !,
+								getAdjFreeCellsAux(B,R,C,6,T,T5,F).
+
+getAdjFreeCellsAux(B,R,C,D,T,Tmp,F) :- 	freeCellInDirection(B,T,R,C,D,Rf,Cf), !,
+										append(Tmp,[[Rf|Cf]|[]],F).	
+getAdjFreeCellsAux(_,_,_,_,_,F,F).
 											
-getAdjCells(B,Ri,Ci,F)	:- 	adjCellsAux(B,Ri,Ci,1,[],T1),
-							adjCellsAux(B,Ri,Ci,2,T1,T2),
-							adjCellsAux(B,Ri,Ci,3,T2,T3),
-							adjCellsAux(B,Ri,Ci,4,T3,T4),								
-							adjCellsAux(B,Ri,Ci,5,T4,T5),
+freeCellInDirection(B,T,Ri,Ci,D,Rf,Cf) :- getCellInDirection(B,Ri,Ci,D,Rt,Ct,Cell), !,
+										(	(getCellDominion(Cell,-1) , getCellSystem(Cell,System),System \= 7, Rf is Rt, Cf is Ct);				   /*Found Empty*/
+											(getCellTeam(Cell,T) , freeCellInDirection(B,T,Rt,Ct,D,Rf,Cf))).											/*Same Team*/											
+											
+getAdjCells(B,Ri,Ci,F)	:- 	adjCellsAux(B,Ri,Ci,1,[],T1), !,												%GET_ADJ_CELLS
+							adjCellsAux(B,Ri,Ci,2,T1,T2), !,
+							adjCellsAux(B,Ri,Ci,3,T2,T3), !,
+							adjCellsAux(B,Ri,Ci,4,T3,T4), !,						
+							adjCellsAux(B,Ri,Ci,5,T4,T5), !,
 							adjCellsAux(B,Ri,Ci,6,T5,F).
 
 
 
-adjCellsAux(B,Ri,Ci,D,T,F) :- 	getCellDirection(B,Ri,Ci,D,Rf,Cf,_), !,
+adjCellsAux(B,Ri,Ci,D,T,F) :- 	getCellInDirection(B,Ri,Ci,D,Rf,Cf,_), !,
 								append(T,[[Rf|Cf]|[]],F).								
-
 adjCellsAux(_,_,_,_,T,T).
 
-testDirection(Board,Ri,Ci,Rf,Cf,D) :-	testDirectionAux(Board,Ri,Cinc), (
-										 (Rf < Ri, (
-													((Cf =< Ci - 1 + Cinc), D is 1) ; 
-													(Cf >= Ci + Cinc, D is 2)
-													)
-										);
-										 (Rf is Ri,(
-													(Cf < Ci, D is 3) ; 
-													(Cf > Ci, D is 4)	
-													)
-										);
-										 (Rf > Ri, (
-													((Cf =< Ci - 1 + Cinc), D is 5) ; 
-													((Cf >= Ci + Cinc), D is 6)
-													)
-										)
-										).
+getCellDirection(Board,Ri,Ci,Rf,Cf,D) :-	getCellDirectionAux(Board,Ri,Cinc), (							%GET_DIRECTION
+											 (Rf < Ri, (
+														((Cf =< Ci - 1 + Cinc), D is 1) ; 
+														(Cf >= Ci + Cinc, D is 2)
+														)
+											);
+											 (Rf is Ri,(
+														(Cf < Ci, D is 3) ; 
+														(Cf > Ci, D is 4)	
+														)
+											);
+											 (Rf > Ri, (
+														((Cf =< Ci - 1 + Cinc), D is 5) ; 
+														((Cf >= Ci + Cinc), D is 6)
+														)
+											)
+											).
 	
-testDirectionAux(Board,Ri,1) :-	getCell(Board,Ri,1,0).
-testDirectionAux(_,_,0).									
+getCellDirectionAux(Board,Ri,1) :-	getCell(Board,Ri,1,0).
+getCellDirectionAux(_,_,0).									
 
 
 

@@ -31,3 +31,6 @@ moveShip(Board,Pi,FinalBoard,Pf,1) :- 	moveShip_settings(Ri,Ci,Rf,Cf),
 										playerSetShip(Pt,[Ri|Ci],[Rf|Cf],Pf).
 				
 moveShip(Board,P,Board,P,0) :- 	nl,write('Movimento invalido!'), nl.
+
+gameOver(Player1,Player2,1) :- playerGetShips(Player1,[]) ; playerGetShips(Player2,[]).
+gameOver(_,_,0).

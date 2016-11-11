@@ -6,7 +6,9 @@ clearscreen :- write('\e[2J').
 
 %INPUTS
 
-game_settings(Board,P1,P2) :- 	clearscreen,
+teste(X) :- write('insert'),read(input),get_char(Input,X).
+
+game_settings(Board,P1,P2) :- 	/*clearscreen,*/
 								board_settings(Board),
 								loadPlayers(Board,P1,P2).
 								
@@ -28,7 +30,7 @@ addDominion_settings(Type) :- 	write('Colony(C) or Trade(T): '),read(Type), nl,
 	
 %OUTPUTS
 	
-displayTurn(Board,Player,Moves) :-	clearscreen,
+displayTurn(Board,Player,Moves) :-	/*clearscreen,*/
 									write('NEW TURN - '),
 									displayTeamName(Player),
 									displayBoard(Board),

@@ -20,7 +20,7 @@ turn(Mode,Board,Pi,FinalBoard,Pf) :- 	updateValidShips(Board,Pi,Pt1), !,
 		
 		
 make_move(Mode, Board,M,Pi,FinalBoard,Pf) :-	movement(Mode,Ri,Ci,Rf,Cf), !,								%SUCCESS
-												validMove(Board,M,Pi,Ri,Ci,Rf,Cf), !,							
+												validMove(M,Pi,Ri,Ci,Rf,Cf), !,							
 												addControl(Board,Pi,Rf,Cf,Tmp1,Pt), !,
 												setShip(Tmp1,Rf,Cf,1,Tmp2), !,
 												setShip(Tmp2,Ri,Ci,-1,FinalBoard), !,
@@ -46,5 +46,4 @@ movement(Mode,Ri,Ci,Rf,Cf) :- Mode == 1 .								%COMPUTER
 
 	
 
-gameOver(Player1,Player2,1) :- playerGetShips(Player1,[]) ; playerGetShips(Player2,[]).
-gameOver(_,_,0).
+gameOver(Player1,Player2) :- playerGetShips(Player1,[]) ; playerGetShips(Player2,[]).

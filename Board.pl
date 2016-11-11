@@ -149,7 +149,7 @@ adjCellsAux(B,Ri,Ci,D,T,F) :- 	getCellInDirection(B,Ri,Ci,D,Rf,Cf,_), !,
 adjCellsAux(_,_,_,_,T,T).
 		
 /*Returns F a list of all the free adjecent Cells from R and C until the board's limits*/
-getAllAdjFreeCells(B,R,C,T,F) :- 	getAdjFreeCellsAux(B,R,C,1,T,[],T1), !,										%GET_ADJ_FREE_CELLS
+getAdjFreeCells(B,R,C,T,F) :- 	getAdjFreeCellsAux(B,R,C,1,T,[],T1), !,										%GET_ADJ_FREE_CELLS
 									getAdjFreeCellsAux(B,R,C,2,T,T1,T2), !,
 									getAdjFreeCellsAux(B,R,C,3,T,T2,T3), !,
 									getAdjFreeCellsAux(B,R,C,4,T,T3,T4), !,

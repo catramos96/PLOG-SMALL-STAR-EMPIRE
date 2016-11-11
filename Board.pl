@@ -86,13 +86,14 @@ setBoardCell(B,R,C,V,F) :- setCellValue(B,R,C,V,F).
 isBoardEmpty(B,0) :- member(B,X),member(X,[_,-1,0]).
 isBoardEmpty(_,1).
 
+isCellFree(Board,Row,Column) :- getBoardCell(Board,Row,Column,Cell), getCellDominion(Cell,-1).
 
-/* %DIRECTION
+/*Returns the adjacent Cell of (Ri,Rf) in a direction
   |1| |2|
 |3| |x| |4| Numbers - directions from cell 'x'
   |5| |6|
-*/
-
+ */
+ 
 getCellInDirection(B,Ri,Ci,1,Rf,Cf,Cell) :- directionAux(B,Ri,Ci,-1,-1,Rf,Cf), getBoardCell(B,Rf,Cf,Cell).	%GET_CELL_IN_DIRECTION
 getCellInDirection(B,Ri,Ci,2,Rf,Cf,Cell) :- directionAux(B,Ri,Ci,-1,1,Rf,Cf), getBoardCell(B,Rf,Cf,Cell).
 getCellInDirection(B,Ri,Ci,3,Ri,Cf,Cell) :- Cf is Ci-1, getBoardCell(B,Ri,Cf,Cell).
@@ -110,36 +111,14 @@ directionAux(_,Ri,Ci,Rinc,Cinc,Rf,Cf) :- 	((Cinc is -1, Cf is Ci - 1);
 											Cf is Ci ),
 											Rf is Ri + Rinc,
 											(Cf > 0) , (Rf > 0).
-
-getAdjFreeCells(B,R,C,T,F) :- getAdjFreeCellsAux(B,R,C,1,T,[],T1), !,										%GET_ADJ_FREE_CELLS
-								getAdjFreeCellsAux(B,R,C,2,T,T1,T2), !,
-								getAdjFreeCellsAux(B,R,C,3,T,T2,T3), !,
-								getAdjFreeCellsAux(B,R,C,4,T,T3,T4), !,
-								getAdjFreeCellsAux(B,R,C,5,T,T4,T5), !,
-								getAdjFreeCellsAux(B,R,C,6,T,T5,F).
-
-getAdjFreeCellsAux(B,R,C,D,T,Tmp,F) :- 	freeCellInDirection(B,T,R,C,D,Rf,Cf), !,
-										append(Tmp,[[Rf|Cf]|[]],F).	
-getAdjFreeCellsAux(_,_,_,_,_,F,F).
 											
-freeCellInDirection(B,T,Ri,Ci,D,Rf,Cf) :- getCellInDirection(B,Ri,Ci,D,Rt,Ct,Cell), !,
-										(	(getCellDominion(Cell,-1) , getCellSystem(Cell,System),System \= 7, Rf is Rt, Cf is Ct);				   /*Found Empty*/
-											(getCellTeam(Cell,T) , freeCellInDirection(B,T,Rt,Ct,D,Rf,Cf))).											/*Same Team*/											
-											
-getAdjCells(B,Ri,Ci,F)	:- 	adjCellsAux(B,Ri,Ci,1,[],T1), !,												%GET_ADJ_CELLS
-							adjCellsAux(B,Ri,Ci,2,T1,T2), !,
-							adjCellsAux(B,Ri,Ci,3,T2,T3), !,
-							adjCellsAux(B,Ri,Ci,4,T3,T4), !,						
-							adjCellsAux(B,Ri,Ci,5,T4,T5), !,
-							adjCellsAux(B,Ri,Ci,6,T5,F).
-
-
-
-adjCellsAux(B,Ri,Ci,D,T,F) :- 	getCellInDirection(B,Ri,Ci,D,Rf,Cf,_), !,
-								append(T,[[Rf|Cf]|[]],F).								
-adjCellsAux(_,_,_,_,T,T).
-
-getCellDirection(Board,Ri,Ci,Rf,Cf,D) :-	getCellDirectionAux(Board,Ri,Cinc), (							%GET_DIRECTION
+/*Returns the next free position in a direction from the inicial row and column*/									
+freeCellInDirection(B,T,Ri,Ci,D,Rf,Cf) :-	 getCellInDirection(B,Ri,Ci,D,Rt,Ct,Cell), !,					%GET_FREE_CELL_IN_DIRECTION
+										(	(getCellDominion(Cell,-1) , getCellSystem(Cell,System),System \= 7, Rf is Rt, Cf is Ct);			
+											(getCellTeam(Cell,T) , freeCellInDirection(B,T,Rt,Ct,D,Rf,Cf))).
+	
+/*Given an inicial Row and a Column and the final Row and Column it returns the APROXIMATION direction that the movement takes*/
+getCellDirection(Board,Ri,Ci,Rf,Cf,D) :-	getCellDirectionAux(Board,Ri,Cinc), (							%GET_FINAL_POSITION_DIRECTION
 											 (Rf < Ri, (
 														((Cf =< Ci - 1 + Cinc), D is 1) ; 
 														(Cf >= Ci + Cinc, D is 2)
@@ -158,7 +137,39 @@ getCellDirection(Board,Ri,Ci,Rf,Cf,D) :-	getCellDirectionAux(Board,Ri,Cinc), (		
 											).
 	
 getCellDirectionAux(Board,Ri,1) :-	getCell(Board,Ri,1,0).
-getCellDirectionAux(_,_,0).									
+getCellDirectionAux(_,_,0).
+	
+/*Given an inicial Row and Column it returns a List F of the adjacent Cells*/										
+getAdjCells(B,Ri,Ci,F)	:- 	adjCellsAux(B,Ri,Ci,1,[],T1), !,												%GET_ADJ_CELLS
+							adjCellsAux(B,Ri,Ci,2,T1,T2), !,
+							adjCellsAux(B,Ri,Ci,3,T2,T3), !,
+							adjCellsAux(B,Ri,Ci,4,T3,T4), !,						
+							adjCellsAux(B,Ri,Ci,5,T4,T5), !,
+							adjCellsAux(B,Ri,Ci,6,T5,F).
+
+
+
+adjCellsAux(B,Ri,Ci,D,T,F) :- 	getCellInDirection(B,Ri,Ci,D,Rf,Cf,_), !,
+								append(T,[[Rf|Cf]|[]],F).								
+adjCellsAux(_,_,_,_,T,T).
+		
+/*Returns F a list of all the free adjecent Cells from R and C until the board's limits*/
+getAllAdjFreeCells(B,R,C,T,F) :- 	getAdjFreeCellsAux(B,R,C,1,T,[],T1), !,										%GET_ADJ_FREE_CELLS
+									getAdjFreeCellsAux(B,R,C,2,T,T1,T2), !,
+									getAdjFreeCellsAux(B,R,C,3,T,T2,T3), !,
+									getAdjFreeCellsAux(B,R,C,4,T,T3,T4), !,
+									getAdjFreeCellsAux(B,R,C,5,T,T4,T5), !,
+									getAdjFreeCellsAux(B,R,C,6,T,T5,F).
+
+getAdjFreeCellsAux(B,R,C,D,T,Tmp,F) :- 	getAllFreeCellsInDirection(B,R,C,D,T,[],Tmp2), 
+										append(Tmp,Tmp2,F).
+										
+
+getAllFreeCellsInDirection(B,R,C,D,T,Tmp,F) :- 	freeCellInDirection(B,T,R,C,D,Rf,Cf), !,
+												append(Tmp,[[Rf|[Cf|[]]]|[]],Tmp2),
+												getAllFreeCellsInDirection(B,Rf,Cf,D,T,Tmp2,F).
+getAllFreeCellsInDirection(_,_,_,_,_,F,F).
+										
 
 /*===========================================*/
 

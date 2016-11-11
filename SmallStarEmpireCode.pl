@@ -16,19 +16,19 @@ game_settings(Board,P1,P2) :- 	clearscreen,
 								board_settings(Board),
 								loadPlayers(Board,P1,P2).
 								
-make_move(Mode, Board,Pi,FinalBoard,Pf) :-	moveShip(Mode, Board,Pi,FinalBoard,Pf,1).
+make_move(Mode, Board,M,Pi,FinalBoard,Pf) :-	moveShip(Mode, Board,M,Pi,FinalBoard,Pf,1).
 
-make_move(Mode, Board,Pi,FinalBoard,Pf) :- 	moveShip(Mode, Board,Pi,_,_,0), !,
-											make_move(Mode, Board,Pi,FinalBoard,Pf).
+make_move(Mode, Board,M,Pi,FinalBoard,Pf) :- 	moveShip(Mode, Board,M,Pi,_,_,0), !,
+											make_move(Mode, Board,M,Pi,FinalBoard,Pf).
 								
 turn(Mode,Board,Pi,FinalBoard,Pf) :- 	nl,write('NEW TURN - '),
 										displayTeamName(Pi),
 										displayBoard(Board),
-										updateValidShips(Board,Pi,Pt1),
+										updateValidShips(Board,Pi,Pt1), !,
 										displayPlayerInfo(Pt1),
-										nl, getPossibleMoves(Board,Pt1,M),
-										displayList(M),
-										make_move(Mode,Board,Pt1,FinalBoard,Pf).
+										getPossibleMoves(Board,Pt1,M),
+										displayPossibleMoves(Pt1,M), !,
+										make_move(Mode,Board,M,Pt1,FinalBoard,Pf).
 									
 play(Board,1,P1i,P2i,P1f,P2f,FinalBoard) :- 	/*clearscreen,*/
 												turn(0,Board,P1i,BoardT,P1t), !,					/*TEMPORARIO : acrescentado o modo de jogo(humano ou maquina) */

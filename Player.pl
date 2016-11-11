@@ -22,6 +22,7 @@ playerGetShips(Pi,S) :- getListElem(Pi,4,S).
 getPosition([R|[C|[]]],R,C).
 getPosition([],-1,-1).
 
+
 %SETS
 playerSetShip(Pi,SPosi,SPosf,Pf) :-	playerRemShip(Pi,SPosi,Pt) , playerAddShip(Pt,SPosf,Pf).
 
@@ -39,6 +40,10 @@ playerAddShip(Pi,SPos,Pf) :- 	getListElem(Pi,4,S), addList(SPos,S,Sf), setList(S
 %REMOVE
 playerRemShip(Pi,SPos,Pf) :-	playerGetShips(Pi,S), remList(SPos,S,Sf), setList(Sf,Pi,4,Pf).	
 
+%CONFIRMATION
+hasShip(Pi,Row,Column) :- 	playerGetShips(Pi,S),
+								member([Row|[Column|[]]],S).
+
 %DISPLAYS
 displayTeamName(P) :- 	playerGetTeam(P,T), T is 1, !,
 						write('Blue Team'),nl.
@@ -48,4 +53,4 @@ displayTeamName(P) :-	playerGetTeam(P,T), T is 2, !,
 
 displayPlayerInfo([_|[Tr|[C|[S|[]]]]]) :- 	write('TRADES: '),nl, displayList(Tr), nl, nl,
 											write('COLONIES: '), nl ,displayList(C), nl, nl,
-											write('SHIPS: '), nl, displayList(S),nl, nl.
+											write('SHIPS: '), nl, displayList(S),nl.

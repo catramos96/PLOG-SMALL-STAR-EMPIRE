@@ -6,7 +6,7 @@
 :-include('Player.pl').	
 :-include('GameFunctionalities.pl')	.
 :-include('GameInterface.pl').	
-:-include('').			
+:-include('Scores.pl').			
 														
 /************************
 *	      GAME			*

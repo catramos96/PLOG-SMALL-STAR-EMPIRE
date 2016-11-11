@@ -55,5 +55,4 @@ chooseWinner(_, Points, _, Points)	:-	nl,write('DRAW!').
 chooseWinner(P1, Points1,_, Points2) :-   Points1 > Points2, displayWinner(P1, Points1).
 chooseWinner(_, Points1, P2, Points2) :-   	Points1 < Points2, displayWinner(P2, Points2).
 
-displayWinner(Player, Points) :-	nl, write('THE WINNER IS - '), displayTeamName(Player), 
-write(' WITH '), write(Points), write(' POINTS!'),nl .
+displayWinner(Player, Points) :- nl, write('THE WINNER IS - '), displayTeamName(Player), write(' WITH '), write(Points), write(' POINTS!'), nl .

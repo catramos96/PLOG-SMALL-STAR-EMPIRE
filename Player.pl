@@ -20,6 +20,7 @@ playerAddBaseShips(Pi,_,_,Pi).
 playerGetTeam([T|_],T).
 playerGetShips(Pi,S) :- getListElem(Pi,4,S).
 getPosition([R|[C|[]]],R,C).
+getPosition([],-1,-1).
 
 %SETS
 playerSetShip(Pi,SPosi,SPosf,Pf) :-	playerRemShip(Pi,SPosi,Pt) , playerAddShip(Pt,SPosf,Pf).

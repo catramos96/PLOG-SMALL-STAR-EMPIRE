@@ -32,14 +32,14 @@ play(Board,1,P1i,P2i,P1f,P2f,FinalBoard) :- 	/*clearscreen,*/
 												turn(0,Board,P1i,BoardT,P1t), !,					/*TEMPORARIO : acrescentado o modo de jogo(humano ou maquina) */
 												gameOver(P1t,P2i,R),
 												(	(R is 0 , play(BoardT,2,P1t,P2i,P1f,P2f,FinalBoard));
-													(R is 1, P1f is P1t, P2f is P2i,BoardT is FinalBoard)
+													(R is 1, append(P1t,[],P1f), append(P2i,[],P2f),append(BoardT,[],FinalBoard))
 												).
 												
 play(Board,2,P1i,P2i,P1f,P2f,FinalBoard) :- 	/*clearscreen,*/
 												turn(0,Board,P2i,BoardT,P2t), !,
 												gameOver(P1i,P2t,R),
 												(	(R is 0 , play(BoardT,1,P1i,P2t,P1f,P2f,FinalBoard));
-													(R is 1,P1f is P1i, P2f is P2t,BoardT is FinalBoard)
+													(R is 1, append(P1i,[],P1f), append(P2t,[],P2f),append(BoardT,[],FinalBoard))
 												).
 								
 game :- game_settings(Board,P1,P2),

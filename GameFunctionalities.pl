@@ -23,18 +23,18 @@ addControl(Board,Pi,Rf,Cf,Final,Pf) :- 	write('Colony(C) or Trade(T)'),	read(Typ
 										
 addControl(Board,Pi,_,_,Board,Pi) :- 	nl,write('No Control to add'), nl .	
 			
-movement(Mode,Ri,Ci,Rf,Cf) :- Mode == 0, moveShip_settings(Ri,Ci,Rf,Cf).
+movement(0,Ri,Ci,Rf,Cf) :- moveShip_settings(Ri,Ci,Rf,Cf).
 
-movement(Mode,Ri,Ci,Rf,Cf) :- Mode == 1 .
+/*movement(Mode,Ri,Ci,Rf,Cf) :- Mode == 1 .P*/
 			
-moveShip(Mode,Board,Pi,FinalBoard,Pf,1) :- 	movement(Mode,Ri,Ci,Rf,Cf), 
+moveShip(Mode,Board,Pi,FinalBoard,Pf,1) :- 	 movement(Mode,Ri,Ci,Rf,Cf), 
 											validMove(Board,Pi,Ri,Ci,Rf,Cf),!,									
 											addControl(Board,Pi,Rf,Cf,Tmp1,Pt),
 											setShip(Tmp1,Rf,Cf,1,Tmp2),
 											setShip(Tmp2,Ri,Ci,-1,FinalBoard),
 											playerSetShip(Pt,[Ri|Ci],[Rf|Cf],Pf).
 				
-moveShip(Board,P,Board,P,0) :- 	nl,write('Movimento invalido!'), nl.
+moveShip(Mode,Board,P,Board,P,0) :- 	nl,write('Movimento invalido!'), nl.
 
 gameOver(Player1,Player2,1) :- playerGetShips(Player1,[]) ; playerGetShips(Player2,[]).
 gameOver(_,_,0).

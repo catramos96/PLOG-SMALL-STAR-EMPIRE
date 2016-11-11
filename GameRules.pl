@@ -18,6 +18,16 @@ setDominion(Board,Team,Row,Column,Type,Final) :-	getBoardCell(Board,Row,Column,C
 													setBoardCell(Board,Row,Column,NewCell,Final).										
 setDominion(Board,_,_,_,_,Board).
 
+%MOVES
+getPossibleMoves(Board,Player,M) :- playerGetShips(Player,Ships), playerGetTeam(Player,Team),
+									possibleMovesAux(Board,Team,Ships,[],M).
+
+
+/*A ALTERAR*/
+possibleMovesAux(Board,Team,[S|Sn],T,M) :- 	getPosition(S,R,C),nl,getAdjFreeCells(Board,R,C,Team,Cells),
+											append(T,Cells,T1), possibleMovesAux(Board,Team,Sn,T1,M).
+possibleMovesAux(_,_,_,M,M).
+
 %CONFIRMATION												
 hasShip(Pi,Row,Column) :- 	playerGetShips(Pi,S),
 								member([Row|[Column|[]]],S).
@@ -44,7 +54,7 @@ isCellFree(Board,Row,Column) :- getBoardCell(Board,Row,Column,Cell), getCellDomi
 updateValidShips(Board,Player,FinalPlayer) :- playerGetShips(Player,Ships),validShips(Board,Player,Ships,FinalPlayer).
 
 validShips(_,P,[],P).
-validShips(Board,Player,[S|Sn],FinalPlayer) :- 	getPosition(S,R,C), playerGetTeam(Player,Team), write('here'),
+validShips(Board,Player,[S|Sn],FinalPlayer) :- 	getPosition(S,R,C), playerGetTeam(Player,Team),
 												getAdjFreeCells(Board,R,C,Team,[]), !,
 												playerRemShip(Player,S,PlayerT), validShips(Board,PlayerT,Sn,FinalPlayer).
 validShips(Board,Player,[_|Sn],FinalPlayer) :- 	validShips(Board,Player,Sn,FinalPlayer).

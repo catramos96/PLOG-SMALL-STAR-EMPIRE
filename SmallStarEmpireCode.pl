@@ -26,6 +26,8 @@ turn(Mode,Board,Pi,FinalBoard,Pf) :- 	nl,write('NEW TURN - '),
 										displayBoard(Board),
 										updateValidShips(Board,Pi,Pt1),
 										displayPlayerInfo(Pt1),
+										nl, getPossibleMoves(Board,Pt1,M),
+										displayList(M),
 										make_move(Mode,Board,Pt1,FinalBoard,Pf).
 									
 play(Board,1,P1i,P2i,P1f,P2f,FinalBoard) :- 	/*clearscreen,*/

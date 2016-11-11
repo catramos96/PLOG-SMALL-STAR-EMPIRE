@@ -4,11 +4,6 @@
 
 :-include('Matrix.pl').
 
-board_settings(Board) :- 	write('BOARD SETTINGS'), nl,
-							write('BoardsId (1): '), read(BoardId), 
-							board(BoardId,Board),
-							nl.
-
 boardInfo :-
 			 nl, write('=============== BOARD INFO ==============='), nl, nl,
 			 write(' --------------- '),nl,

@@ -3,42 +3,48 @@
 ************************/
 
 :-include('GameRules.pl').
-/*:-include('Board.pl').
-:-include('Player.pl').	*/
 
-loadPlayers(Board,P1,P2) :- 	getCell(Board,R1,C1,[6,0,N1]),
+
+loadPlayers(Board,P1,P2) :- 	getCell(Board,R1,C1,[6,0,N1]),								
 								createPlayer(1,N1,[R1|[C1|[]]],P1),
 								getCell(Board,R2,C2,[6,2,N2]),
-								createPlayer(2,N2,[R2|[C2|[]]],P2).	
+								createPlayer(2,N2,[R2|[C2|[]]],P2).						
+
 								
-
-moveShip_settings(Ri,Ci,Rf,Cf) :- 	nl, write('From Row'), read(Ri),
-										write('From Column'),read(Ci),
-										write('To Row'), read(Rf),
-										write('To Column'),read(Cf), nl .
+								
+turn(Mode,Board,Pi,FinalBoard,Pf) :- 	updateValidShips(Board,Pi,Pt1), !,
+										getPossibleMoves(Board,Pt1,M), !,
+										displayTurn(Board,Pt1,M), 
+										make_move(Mode,Board,M,Pt1,FinalBoard,Pf).
+		
+		
+		
+make_move(Mode, Board,M,Pi,FinalBoard,Pf) :-	movement(Mode,Ri,Ci,Rf,Cf), !,								%SUCCESS
+												validMove(Board,M,Pi,Ri,Ci,Rf,Cf), !,							
+												addControl(Board,Pi,Rf,Cf,Tmp1,Pt), !,
+												setShip(Tmp1,Rf,Cf,1,Tmp2), !,
+												setShip(Tmp2,Ri,Ci,-1,FinalBoard), !,
+												playerSetShip(Pt,[Ri|[Ci|[]]],[Rf|[Cf|[]]],Pf).	
+												
+make_move(Mode, Board,M,Pi,FinalBoard,Pf) :- 	make_move(Mode, Board,M,Pi,FinalBoard,Pf).	%FAIL
+							
+							
 										
-addControl(Board,Pi,Rf,Cf,Final,Pf) :- 	write('Colony(C) or Trade(T)'),	read(Type),
-										playerGetTeam(Pi,Team),
-										setDominion(Board,Team,Rf,Cf,Type,Final),
-										playerAddControl(Pi,Type,[Rf|[Cf|[]]],Pf).
+addControl(Board,Pi,Rf,Cf,Final,Pf) :-  addDominion_settings(Type), !,									%SUCCESS
+										playerGetTeam(Pi,Team),								
+										setDominion(Board,Team,Rf,Cf,Type,Final), !,
+										playerAddControl(Pi,Type,[Rf|[Cf|[]]],Pf).		
 										
-addControl(Board,Pi,_,_,Board,Pi) :- 	nl,write('No Control to add'), nl .	
+addControl(Board,Pi,Rf,Cf,Final,Pf) :- 	error(2), addControl(Board,Pi,Rf,Cf,Final,Pf).					%FAIL
 			
-movement(0,Ri,Ci,Rf,Cf) :- moveShip_settings(Ri,Ci,Rf,Cf).
-
-/*movement(Mode,Ri,Ci,Rf,Cf) :- Mode == 1 .P
-
-M - Movimentos possiveis
-*/
 			
-moveShip(Mode,Board,M,Pi,FinalBoard,Pf,1) :- 	movement(Mode,Ri,Ci,Rf,Cf), 
-												validMove(Board,M,Pi,Ri,Ci,Rf,Cf),!,									
-												addControl(Board,Pi,Rf,Cf,Tmp1,Pt),
-												setShip(Tmp1,Rf,Cf,1,Tmp2),
-												setShip(Tmp2,Ri,Ci,-1,FinalBoard),
-												playerSetShip(Pt,[Ri|[Ci|[]]],[Rf|[Cf|[]]],Pf).
-				
-moveShip(Mode,Board,M,P,Board,P,0) :- 	nl,write('Movimento invalido!'), nl.
+			
+movement(0,Ri,Ci,Rf,Cf) :- moveShip_settings(Ri,Ci,Rf,Cf).				%PERSON
+movement(0,Ri,Ci,Rf,Cf) :- error(4), moveShip_settings(Ri,Ci,Rf,Cf).
+
+movement(Mode,Ri,Ci,Rf,Cf) :- Mode == 1 .								%COMPUTER
+
+	
 
 gameOver(Player1,Player2,1) :- playerGetShips(Player1,[]) ; playerGetShips(Player2,[]).
 gameOver(_,_,0).

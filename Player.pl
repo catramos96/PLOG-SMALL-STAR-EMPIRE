@@ -53,4 +53,4 @@ displayTeamName(P) :-	playerGetTeam(P,T), T is 2, !,
 
 displayPlayerInfo([_|[Tr|[C|[S|[]]]]]) :- 	write('TRADES: '),nl, displayList(Tr), nl, nl,
 											write('COLONIES: '), nl ,displayList(C), nl, nl,
-											write('SHIPS: '), nl, displayList(S),nl.
+											write('SHIPS: '), nl, displayList(S),nl, nl.

@@ -4,41 +4,20 @@
 
 :-include('Board.pl').
 :-include('Player.pl').	
-:-include('GameFunctionalities.pl')	.					
+:-include('GameFunctionalities.pl')	.
+:-include('GameInterface.pl').				
 														
 /************************
 *	      GAME			*
 ************************/
-
-clearscreen :- write('\e[2J').
-
-game_settings(Board,P1,P2) :- 	clearscreen,
-								board_settings(Board),
-								loadPlayers(Board,P1,P2).
-								
-make_move(Mode, Board,M,Pi,FinalBoard,Pf) :-	moveShip(Mode, Board,M,Pi,FinalBoard,Pf,1).
-
-make_move(Mode, Board,M,Pi,FinalBoard,Pf) :- 	moveShip(Mode, Board,M,Pi,_,_,0), !,
-											make_move(Mode, Board,M,Pi,FinalBoard,Pf).
-								
-turn(Mode,Board,Pi,FinalBoard,Pf) :- 	nl,write('NEW TURN - '),
-										displayTeamName(Pi),
-										displayBoard(Board),
-										updateValidShips(Board,Pi,Pt1), !,
-										displayPlayerInfo(Pt1),
-										getPossibleMoves(Board,Pt1,M),
-										displayPossibleMoves(Pt1,M), !,
-										make_move(Mode,Board,M,Pt1,FinalBoard,Pf).
 									
-play(Board,1,P1i,P2i,P1f,P2f,FinalBoard) :- 	/*clearscreen,*/
-												turn(0,Board,P1i,BoardT,P1t), !,					/*TEMPORARIO : acrescentado o modo de jogo(humano ou maquina) */
+play(Board,1,P1i,P2i,P1f,P2f,FinalBoard) :- 	turn(0,Board,P1i,BoardT,P1t), !,					/*TEMPORARIO : acrescentado o modo de jogo(humano ou maquina) */
 												gameOver(P1t,P2i,R),
 												(	(R is 0 , play(BoardT,2,P1t,P2i,P1f,P2f,FinalBoard));
 													(R is 1, append(P1t,[],P1f), append(P2i,[],P2f),append(BoardT,[],FinalBoard))
 												).
 												
-play(Board,2,P1i,P2i,P1f,P2f,FinalBoard) :- 	/*clearscreen,*/
-												turn(0,Board,P2i,BoardT,P2t), !,
+play(Board,2,P1i,P2i,P1f,P2f,FinalBoard) :- 	turn(0,Board,P2i,BoardT,P2t), !,
 												gameOver(P1i,P2t,R),
 												(	(R is 0 , play(BoardT,1,P1i,P2t,P1f,P2f,FinalBoard));
 													(R is 1, append(P1i,[],P1f), append(P2t,[],P2f),append(BoardT,[],FinalBoard))
@@ -46,11 +25,6 @@ play(Board,2,P1i,P2i,P1f,P2f,FinalBoard) :- 	/*clearscreen,*/
 								
 game :- game_settings(Board,P1,P2),
 		play(Board,1,P1,P2,P1f,P2f,Bf), !,
-		write('OUT'),
-		displayPlayerInfo(P1f), nl, !,
-		displayPlayerInfo(P2f), nl, !,
-		displayBoard(Bf), !,
-		/*board(4,Board),*/
 		winner(Bf,P1f,P2f).
 		
 /* ================================================================================ */
@@ -109,5 +83,3 @@ chooseWinner(_, Points, _, Points)	:-	nl,write('DRAW!').
 chooseWinner(P1, Points1,_, Points2) :-   Points1 > Points2, displayWinner(P1, Points1).
 chooseWinner(_, Points1, P2, Points2) :-   Points1 < Points2, displayWinner(P2, Points2).
 
-displayWinner(Player, Points) :-	nl, write('THE WINNER IS - '), displayTeamName(Player), 
-									write(' WITH '), write(Points), write(' POINTS!'),nl .

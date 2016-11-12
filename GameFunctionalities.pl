@@ -35,7 +35,7 @@ addControl(Mode,Board,Pi,Rf,Cf,Final,Pf) :- addControlAux(Mode,Pi,Board,Rf,Cf,Ty
 											setDominion(Board,Team,Rf,Cf,Type,Final), !,
 											playerAddControl(Pi,Type,[Rf|[Cf|[]]],Pf).		
 										
-addControl(Mode,Board,Pi,Rf,Cf,Final,Pf) :- error(2), addControl(Board,Pi,Rf,Cf,Final,Pf).					%FAIL
+addControl(Mode,Board,Pi,Rf,Cf,Final,Pf) :- error(2), addControl(Mode,Board,Pi,Rf,Cf,Final,Pf).					%FAIL
 			
 
 addControlAux(0,_,_,_,_,Type) :- addDominion_settings(Type) .		
@@ -51,13 +51,13 @@ chooseType(Player,AdjCells,MyTeam,Type)	:- 	(MyTeam == 1, member(AdjCells,[_|[2|
 											Type = 'T'.
 chooseType(_,_,_,Type) :- Type = 'C'.						
 			
-movement(0,_,_,Ri,Ci,Rf,Cf) :- 	moveShip_settings(Ri,Ci,Rf,Cf),				%PERSON
-								validMove(M,Pi,Ri,Ci,Rf,Cf).
-movement(0,_,_,Ri,Ci,Rf,Cf) :- error(4), movement(0,_,_Ri,Ci,Rf,Cf).
+movement(0,Player,AllMoves,Ri,Ci,Rf,Cf) :- 	moveShip_settings(Ri,Ci,Rf,Cf),				%PERSON
+											validMove(AllMoves,Player,Ri,Ci,Rf,Cf).
+movement(0,Player,AllMoves,Ri,Ci,Rf,Cf) :- 	error(4), movement(0,Player,AllMoves,Ri,Ci,Rf,Cf).
 
 movement(1,Player,AllMoves,Ri,Ci,Rf,Cf) :-	getRandShip(Player,AllMoves,Ri,Ci,ShipMoves),
 											getRandMove(ShipMoves,Rf,Cf) .								%COMPUTER
-movement(1,Player,AllMoves,Ri,Ci,Rf,Cf) :- write('erro?'),nl .
+movement(1,_,_,_,_,_,_) :- write('erro?'),nl .
 
 getRandShip(Player,AllMoves,R,C,ShipMoves) :- 	playerGetShips(Player,Ships), 
 												length(Ships,Length),

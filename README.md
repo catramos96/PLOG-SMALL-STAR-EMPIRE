@@ -13,11 +13,8 @@
 
 ## Interface
 
-* Melhorar display de menus
-
 ## Geral
 
 * Implementar Limite de trades a colocar
 * Fazer get_char em vez de read
 * Melhorar display do board
-* Fazer random de [1,2] para saber qual o jogador que começa primeiro

@@ -23,18 +23,19 @@ countPoints(Board,[[R|[C|[]]]|Lb], AccPoints, FinalPoints, AccB, AccR) :-   getB
 																			NewPoints is AccPoints1 + P , 
 																			countPoints(Board,Lb,NewPoints,FinalPoints, NewAccB, NewAccR) .
 
-getTradePointsAux(Board,R,C,Acc,1,Points,NewPoints) :-	getCellDirection(Board,R,C,Acc,Rf,Cf), 
-														getBoardCell(Board,Rf,Cf,[_|[2|_]]), !,
-														NewPoints is Points + 1 .
-getTradePointsAux(Board,R,C,Acc,2,Points,NewPoints) :- 	write(R),write(C),getCellDirection(Board,R,C,Acc,Rf,Cf), write(' passou'),nl,
-														getBoardCell(Board,Rf,Cf,[_|[1|_]]), !,
-														NewPoints is Points + 1 .															
-getTradePointsAux(_,_,_,_,_,Points,Points).
+getTradePointsAux(_,[],_,Points,Points).
+getTradePointsAux(Board,[[R|[C|[]]]|Cr],1,Acc,Points) :-	getBoardCell(Board,R,C,[_|[2|_]]), !,
+															NewAcc is Acc + 1 ,
+															getTradePointsAux(Board,Cr,1,NewAcc,Points) .
+getTradePointsAux(Board,[[R|[C|[]]]|Cr],2,Acc,Points) :-	getBoardCell(Board,R,C,[_|[1|_]]), !,
+															NewAcc is Acc + 1 ,
+															getTradePointsAux(Board,Cr,2,NewAcc,Points) .
+getTradePointsAux(Board,[_|Cr],Team,Acc,Points) :-	getTradePointsAux(Board,Cr,Team,Acc,Points) .			
 																			
-getTradePoints(Board,R,C,DominionID,Acc,Points,FinalPoints) :- 	dominion(DominionID,Team,'T'), Acc > 0, Acc < 7, 
-																getTradePointsAux(Board,R,C,Acc,Team,Points,NewPoints),
-																NewAcc is Acc + 1, 
-																getTradePoints(Board,R,C,DominionID,NewAcc,NewPoints,FinalPoints) .
+getTradePoints(Board,R,C,DominionID,Points,FinalPoints) :- 	dominion(DominionID,Team,'T'),  		/* o meu dominio e uma trade */
+															getAdjCells(Board,R,C,AdjCells),		/* verifico quais sao as celulas a volta */
+															getTradePointsAux(Board,AdjCells,Team,0,NewPoints),	/* calculo dos pontos dessa trade */
+															FinalPoints is Points + NewPoints .
 getTradePoints(_,_,_,_,_,Points,Points) .
 																			
 getSystemTypePoints(ID,P, AccB,AccR, AccB,AccR) :- (ID == 1 ; ID == 2; ID == 3), systemType(ID,_,P).

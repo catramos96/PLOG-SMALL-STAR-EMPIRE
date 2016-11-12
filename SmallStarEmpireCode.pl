@@ -13,13 +13,13 @@
 ************************/
 	
 
-play(Board,1,P1i,P2i,P1f,P2f,FinalBoard) :- 	turn(1,Board,P1i,BoardT,P1t), !,			/*TEMPORARIO : acrescentado o modo de jogo(humano ou maquina) */
-												play(BoardT,2,P1t,P2i,P1f,P2f,FinalBoard) .
+play(Board,Nivel,1,P1i,P2i,P1f,P2f,FinalBoard) :- 	turn(Board,Nivel,P1i,BoardT,P1t), !,		
+													play(BoardT,Nivel,2,P1t,P2i,P1f,P2f,FinalBoard) .
 												
-play(Board,2,P1i,P2i,P1f,P2f,FinalBoard) :- 	turn(1,Board,P2i,BoardT,P2t), !,
-												play(BoardT,1,P1i,P2t,P1f,P2f,FinalBoard).											
-play(Board,_,P1,P2,P1,P2,Board).
+play(Board,Nivel,2,P1i,P2i,P1f,P2f,FinalBoard) :- 	turn(Board,Nivel,P2i,BoardT,P2t), !,
+													play(BoardT,Nivel,1,P1i,P2t,P1f,P2f,FinalBoard).											
+play(Board,_,_,P1,P2,P1,P2,Board).
 								
-game :- game_settings(Board,P1,P2), !,
-		play(Board,1,P1,P2,P1f,P2f,Bf), !,
+game :- game_settings(Board,Nivel,P1,P2), !,
+		play(Board,Nivel,1,P1,P2,P1f,P2f,Bf), !,
 		winner(Bf,P1f,P2f).

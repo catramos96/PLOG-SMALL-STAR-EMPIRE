@@ -6,21 +6,34 @@ clearscreen :- write('\e[2J').
 
 %INPUTS
 
-game_settings(Board,P1,P2) :- 	/*clearscreen,*/
-								board_settings(Board),
-								loadPlayers(Board,P1,P2).
+game_settings(Board,Nivel,P1,P2) :- 	clearscreen,
+								write('BOARD SETTINGS'), nl,
+									write(' (1) BoardsId'), nl,
+									read(BoardId), nl, nl,
+								board(BoardId,Board),
+								write('GAME MODE'), nl,
+									write(' (1) Human vs Human'), nl,
+									write(' (2) Human vs Computer'),nl,
+									write(' (3) Computer vs Computer'),nl,
+									read(Mode), nl,nl,
+								(	((Mode is 2 ; Mode is 3), 
+										write('NIVEL'),nl,
+										write('(1) EASY'),nl,
+										write('(2) HARD'),nl,
+										read(Nivel), nl,nl) ;
+									(Mode is 1, Nivel is 0)	
+								),								 
+								loadPlayers(Board,Mode,P1,P2).
 								
-board_settings(Board) :- 	write('BOARD SETTINGS'), nl,
-							write('BoardsId (1): '), read(BoardId), 
-							board(BoardId,Board),
-							nl.
-							
+game_settings(Board,Nivel,P1,P2) :- error(5) , game_settings(Board,Nivel,P1,P2).
+								
+								
 moveShip_settings(Ri,Ci,Rf,Cf) :- 	write('CHOOSE SHIP'), nl,
-									write('From Row'), read(Ri),
-									write('From Column'),read(Ci),
+									write(' From Row'), read(Ri),
+									write(' From Column'),read(Ci),
 									write('CHOOSE DESTINATION'),nl,
-									write('To Row'), read(Rf),
-									write('To Column'),read(Cf), nl,
+									write(' To Row'), read(Rf),
+									write(' To Column'),read(Cf), nl,
 									number(Ri),number(Ci),number(Rf),number(Cf).
 										
 addDominion_settings(Type) :- 	write('Colony(C) or Trade(T): '),read(Type), nl,
@@ -55,6 +68,7 @@ errorMsg(1) :- write('Invalid movement').
 errorMsg(2) :- write('Could not add dominion').
 errorMsg(3) :- write('Could not load players, wrong board').
 errorMsg(4) :- write('Values must be numbers > 0').
+errorMsg(5) :- write('Wrong Arguments').
 									
 									
 									

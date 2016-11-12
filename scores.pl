@@ -2,10 +2,10 @@
 *		SCORES			*
 ************************/
 
-winner(Board,P1,P2):- 	playerGetPoints(Board,P1,ListLength1,Points1), 
+winner(Board,P1,P2):- 	playerGetPoints(Board,P1,ListLength1,Points1), nl,
 						playerGetPoints(Board,P2,ListLength2,Points2),
 						biggestTerritoryPoints(ListLength1, Points1, NewPoints1, ListLength2, Points2, NewPoints2), 
-						chooseWinner(P1, NewPoints1, P2, NewPoints2) .
+						chooseWinner(Board,P1,NewPoints1,P2,NewPoints2) .
 					
 playerGetPoints(Board,Player,ListLength,Points) :-  playerTerritory(Player,List), 
 													length(List,ListLength),
@@ -26,7 +26,7 @@ countPoints(Board,[[R|[C|[]]]|Lb], AccPoints, FinalPoints, AccB, AccR) :-   getB
 getTradePointsAux(Board,R,C,Acc,1,Points,NewPoints) :-	getCellDirection(Board,R,C,Acc,Rf,Cf), 
 														getBoardCell(Board,Rf,Cf,[_|[2|_]]), !,
 														NewPoints is Points + 1 .
-getTradePointsAux(Board,R,C,Acc,2,Points,NewPoints) :- 	getCellDirection(Board,R,C,Acc,Rf,Cf), 
+getTradePointsAux(Board,R,C,Acc,2,Points,NewPoints) :- 	write(R),write(C),getCellDirection(Board,R,C,Acc,Rf,Cf), write(' passou'),nl,
 														getBoardCell(Board,Rf,Cf,[_|[1|_]]), !,
 														NewPoints is Points + 1 .															
 getTradePointsAux(_,_,_,_,_,Points,Points).
@@ -51,8 +51,10 @@ biggestTerritoryPoints(Length1, Points1, NewPoints1, Length2, Points2, Points2) 
 biggestTerritoryPoints(Length1, Points1, Points1, Length2, Points2, NewPoints2) :- Length1 < Length2 , NewPoints2 is Points2 + 3 .
 biggestTerritoryPoints(Length1, Points1, Points1, Length2, Points2, Points2) :- Length1 == Length2 .															
 																					
-chooseWinner(_, Points, _, Points)	:-	nl,write('DRAW!').	
-chooseWinner(P1, Points1,_, Points2) :-   Points1 > Points2, displayWinner(P1, Points1).
-chooseWinner(_, Points1, P2, Points2) :-   	Points1 < Points2, displayWinner(P2, Points2).
+chooseWinner(Board,_,Points,_,Points)	:-	displayBoard(Board),nl,write('DRAW!').	
+chooseWinner(Board,P1,Points1,_,Points2) :-   Points1 > Points2, displayWinner(Board,P1,Points1).
+chooseWinner(Board,_,Points1,P2,Points2) :-   	Points1 < Points2, displayWinner(Board,P2,Points2).
 
-displayWinner(Player, Points) :- nl, write('THE WINNER IS - '), displayTeamName(Player), write(' WITH '), write(Points), write(' POINTS!'), nl .
+displayWinner(Board, Player, Points) :- displayBoard(Board),
+										nl, write('THE WINNER IS - '), displayTeamName(Player), 
+										write(' WITH '), write(Points), write(' POINTS!'), nl .

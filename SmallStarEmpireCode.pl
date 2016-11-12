@@ -13,10 +13,10 @@
 ************************/
 	
 
-play(Board,1,P1i,P2i,P1f,P2f,FinalBoard) :- 	turn(0,Board,P1i,BoardT,P1t), !,			/*TEMPORARIO : acrescentado o modo de jogo(humano ou maquina) */
-												play(BoardT,2,P1t,P2i,P1f,P2f,FinalBoard).
+play(Board,1,P1i,P2i,P1f,P2f,FinalBoard) :- 	turn(1,Board,P1i,BoardT,P1t), !,			/*TEMPORARIO : acrescentado o modo de jogo(humano ou maquina) */
+												play(BoardT,2,P1t,P2i,P1f,P2f,FinalBoard) .
 												
-play(Board,2,P1i,P2i,P1f,P2f,FinalBoard) :- 	turn(0,Board,P2i,BoardT,P2t), !,
+play(Board,2,P1i,P2i,P1f,P2f,FinalBoard) :- 	turn(1,Board,P2i,BoardT,P2t), !,
 												play(BoardT,1,P1i,P2t,P1f,P2f,FinalBoard).											
 play(Board,_,P1,P2,P1,P2,Board).
 								

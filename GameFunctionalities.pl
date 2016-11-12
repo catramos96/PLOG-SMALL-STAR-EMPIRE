@@ -36,7 +36,8 @@ make_move(Board,Nivel,AllMoves,Pi,FinalBoard,Pf) :- make_move(Board,Nivel,AllMov
 							
 										
 addControl(Board,Pi,Rf,Cf,Final,Pf) :- addControlAux(Pi,Board,Rf,Cf,Type), !,									%SUCCESS
-										playerGetTeam(Pi,Team),								
+										playerGetTeam(Pi,Team),	
+										\+ (Type == 'T', playerGetTrades(Pi,Trades),length(Trades,L), L >= 4,error(6)),
 										setDominion(Board,Team,Rf,Cf,Type,Final), !,
 										playerAddControl(Pi,Type,[Rf|[Cf|[]]],Pf).		
 										

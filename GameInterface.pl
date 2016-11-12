@@ -69,6 +69,7 @@ errorMsg(2) :- write('Could not add dominion').
 errorMsg(3) :- write('Could not load players, wrong board').
 errorMsg(4) :- write('Values must be numbers > 0').
 errorMsg(5) :- write('Wrong Arguments').
+errorMsg(6) :- write('You have Placed 4 Trades already').
 									
 									
 									

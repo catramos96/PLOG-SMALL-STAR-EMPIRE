@@ -3,7 +3,7 @@
 ************************/
 
 :-include('GameRules.pl').
-:- use_module(library(random)).
+
 
 loadPlayers(Board,Mode,P1f,P2f) :- 	getCell(Board,R1,C1,[6,0,N1]),		
 									getCell(Board,R2,C2,[6,2,N2]),

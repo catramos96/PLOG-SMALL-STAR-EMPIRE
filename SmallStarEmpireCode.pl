@@ -6,7 +6,8 @@
 :-include('Player.pl').	
 :-include('GameFunctionalities.pl')	.
 :-include('GameInterface.pl').	
-:-include('Scores.pl').			
+:-include('Scores.pl').		
+:- use_module(library(random)).	
 														
 /************************
 *	      GAME			*
@@ -21,5 +22,7 @@ play(Board,Nivel,2,P1i,P2i,P1f,P2f,FinalBoard) :- 	turn(Board,Nivel,P2i,BoardT,P
 play(Board,_,_,P1,P2,P1,P2,Board).
 								
 game :- game_settings(Board,Nivel,P1,P2), !,
-		play(Board,Nivel,1,P1,P2,P1f,P2f,Bf), !,
+		random(1,3,Team), !,
+		write(Team) ,nl,
+		play(Board,Nivel,Team,P1,P2,P1f,P2f,Bf), !,
 		winner(Bf,P1f,P2f).

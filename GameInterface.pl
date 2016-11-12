@@ -45,8 +45,10 @@ displayMovesAux([S|Sn],[M|Mn]) :- 	write('SHIP - '), write(S), write('    '),
 								
 								
 									
-displayWinner(Player, Points) :-	nl, write('THE WINNER IS - '), displayTeamName(Player), 
-									write(' WITH '), write(Points), write(' POINTS!'),nl .
+displayWinner(Board,Player,Points1,Points2) :-	displayBoard(Board), nl,
+												write('THE WINNER IS - '), displayTeamName(Player),nl, 
+												write('BLUE TEAM '), write(Points1), write(' POINTS!'),nl,
+												write('RED TEAM '), write(Points2), write(' POINTS!'),nl .
 									
 error(T) :- write('WARNING'), nl, errorMsg(T), nl, nl.
 errorMsg(1) :- write('Invalid movement').

@@ -42,14 +42,14 @@ addControlAux(0,_,_,_,_,Type) :- addDominion_settings(Type) .
 
 addControlAux(1,Player,Board,R,C,Type) :- 	getAdjCells(Board,R,C,AdjCells),
 											playerGetTeam(Player,MyTeam),
-											chooseType(Player,AdjCells,MyTeam,Type).							
+											chooseType(Board,Player,AdjCells,MyTeam,Type).							
 							
-chooseType(Player,AdjCells,MyTeam,Type)	:- 	(MyTeam == 1, member(AdjCells,[_|[2|[]]]) ) ;
-											(MyTeam == 2, member(AdjCells,[_|[1|[]]]) ) ,
-											getListElem(Player,2,Trades),
-											length(Trades,Length), Length < 4, 	/* Ainda posso colocar Trades*/
-											Type = 'T'.
-chooseType(_,_,_,Type) :- Type = 'C'.						
+chooseType(Board,Player,AdjCells,MyTeam,Type)	:- 	getTradePointsAux(Board,AdjCells,MyTeam,0,Num),
+													Num > 0, 
+													getListElem(Player,2,Trades),
+													length(Trades,Length), Length < 4, 	/* Ainda posso colocar Trades*/
+													Type = 'T'.
+chooseType(_,_,_,_,Type) :- Type = 'C'.						
 			
 movement(0,Player,AllMoves,Ri,Ci,Rf,Cf) :- 	moveShip_settings(Ri,Ci,Rf,Cf),				%PERSON
 											validMove(AllMoves,Player,Ri,Ci,Rf,Cf).

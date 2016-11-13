@@ -16,4 +16,3 @@
 ## Geral
 
 * Fazer get_char em vez de read
-* Melhorar display do board

@@ -12,6 +12,13 @@ possibleMovesAux(Board,Team,[S|Sn],T,M) :- 	getPosition(S,R,C),nl,getAdjFreeCell
 											append(T,[Cells|[]],T1), possibleMovesAux(Board,Team,Sn,T1,M).
 possibleMovesAux(_,_,_,M,M).
 
+chooseType(Nivel,Board,Player,AdjCells,MyTeam,Type)	:-  getTradePointsAux(Board,AdjCells,MyTeam,0,Num),
+														((Nivel == 2, Num > 1) ; 
+														(Nivel == 1, Num > 0)) ,
+														playerGetTrades(Player,Trades),
+														length(Trades,Length), Length < 4, 	/* Ainda posso colocar Trades*/
+														Type = 'T'.
+chooseType(_,_,_,_,_,Type) :- Type = 'C'.						
 
 /* ------------------------- */									
 getPossibleMovesValued(Board,Player,AllMoves,ValuedList) :- setValuedMoves(Board,Player,AllMoves,[],ValuedList).

@@ -23,7 +23,7 @@ boardInfo :-
 board(1,[[0,[1,-1,0],[5,-1,0],[2,-1,0],[0,-1,0]],		%INICIAL		
 		 [[4,-1,0],[6,0,4],[3,-1,0],[7,-1,0],[3,-1,0]],
 		 [0,[2,-1,0],[0,-1,0],[4,-1,0],[1,-1,0]],
-		 [[7,-1,0],[2,-1,0],[5,-1,0],[6,2,4],[4,-1,0]],
+		 [[7,-1,0],[2,-1,0],[5,-1,0],[6,2,4],[0,-1,0]],
 		 [0,[3,-1,0],[5,-1,0],[0,-1,0],[4,-1,0]]]).
 		 
 board(2,[[0,[1,1,0],[5,2,1],[2,0,1],[0,3,0]],			%FINAL_OCUPADO		
@@ -72,7 +72,7 @@ displayBottomLine([E1|E2]) :- ((E1 == 0 , write(' /'));write(' \\ /')),displayBo
 
 displayInfo1([IDs|_]) :- systemType(IDs,_,_), write('|'), displaySystem(IDs).
 displayInfo2([IDs|[IDp|[N|[]]]]) :- systemType(IDs,_,_), dominion(IDp,_,_), write('| '),((N == 0, write('  '));(write(N), write(' '))).
-displayInfo3([IDs|[IDp|[N|[]]]]) :- systemType(IDs,_,_), dominion(IDp,_,_), write('|'),displayDominion(IDp).
+displayInfo3([IDs|[IDp|[_|[]]]]) :- systemType(IDs,_,_), dominion(IDp,_,_), write('|'),displayDominion(IDp).
 
 %GETS
 getBoardCell(B,R,C,V) :- getCell(B,R,1,X), X == 0 ,!,C1 is C + 1, getCell(B,R,C1,V).
@@ -154,24 +154,6 @@ adjCellsAux(B,Ri,Ci,D,T,F) :- 	getCellInDirection(B,Ri,Ci,D,Rf,Cf,_), !,
 								append(T,[[Rf|Cf]|[]],F).								
 adjCellsAux(_,_,_,_,T,T).
 		
-
-										
-
-/*===========================================
-
-checkEmptyList([_|[-1|_]], Position, ListBefore, ListAfter) :- 	append(ListBefore,Position,ListAfter) .
-checkEmptyList(_, _, List, List).						
-
-getAllFreeCellsRow(Board,R,C,List,FinalList) :-	getBoardCell(Board,1,C,Value), !,
-												checkEmptyList(Value,[[R|C]|[]],List,TempList),
-												Cnext is C + 1,
-												getAllFreeCellsRow(Board,R,Cnext,TempList,FinalList) .
-getAllFreeCellsRow(_,_,_,List,List).
-
-getAllFreeCells(_,[],_,_,List,List).
-getAllFreeCells(Board,[A|B],R,C,List,FinalList) :-  getAllFreeCellsRow(Board,R,C,List,TempList), !,
-													Rnext is R + 1,
-													getAllFreeCells(Board,B,Rnext,1,TempList,FinalList) .*/
 
 		/*Returns F a list of all the free adjecent Cells from R and C until the board's limits*/
 getAdjFreeCells(B,R,C,T,F) :- 	getAdjFreeCellsAux(B,R,C,1,T,[],T1), !,										%GET_ADJ_FREE_CELLS

@@ -25,7 +25,7 @@ turn(Board,Nivel,Pi,FinalBoard,Pf) :- 	updateValidShips(Board,Pi,Pt1), !,
 		
 		
 		
-make_move(Board,Nivel,AllMoves,Pi,FinalBoard,Pf) :-	movement(Nivel,Board,Pi,AllMoves,Ri,Ci,Rf,Cf), !, write(Ri),write(Ci), write(' '),write(Rf), write(Cf),nl,	%SUCCESS							
+make_move(Board,Nivel,AllMoves,Pi,FinalBoard,Pf) :-	movement(Nivel,Board,Pi,AllMoves,Ri,Ci,Rf,Cf), !,	%SUCCESS							
 													addControl(Nivel,Board,Pi,Rf,Cf,Tmp1,Pt), !,
 													setShip(Tmp1,Rf,Cf,1,Tmp2), !,
 													setShip(Tmp2,Ri,Ci,-1,FinalBoard), !,
@@ -44,18 +44,18 @@ addControl(Nivel,Board,Pi,Rf,Cf,Final,Pf) :- 	addControlAux(Nivel,Pi,Board,Rf,Cf
 addControl(Nivel,Board,Pi,Rf,Cf,Final,Pf) :- error(2), addControl(Nivel,Board,Pi,Rf,Cf,Final,Pf).					%FAIL
 			
 
-addControlAux(Nivel,Player,_,_,_,Type) :- 	playerGetType(Player,'H'),
-											addDominion_settings(Type) .		
+addControlAux(_,Player,_,_,_,Type) :- 	playerGetType(Player,'H'),
+										addDominion_settings(Type) .		
 
 addControlAux(Nivel,Player,Board,R,C,Type) :- 	playerGetType(Player,'C'),
 												getAdjCells(Board,R,C,AdjCells),
 												playerGetTeam(Player,MyTeam),
-												chooseType(Nivel,Board,Player,AdjCells,MyTeam,Type).							
+												chooseType(Nivel,Board,Player,AdjCells,MyTeam,Type) .							
 							
-chooseType(Nivel,Board,Player,AdjCells,MyTeam,Type)	:- 	getTradePointsAux(Board,AdjCells,MyTeam,0,Num), write('NUM '),write(Num),nl,
+chooseType(Nivel,Board,Player,AdjCells,MyTeam,Type)	:-  getTradePointsAux(Board,AdjCells,MyTeam,0,Num),
 														((Nivel == 2, Num > 1) ; 
-														(Nivel == 1, Num > 0)) , 
-														getListElem(Player,2,Trades),
+														(Nivel == 1, Num > 0)) ,
+														playerGetTrades(Player,Trades),
 														length(Trades,Length), Length < 4, 	/* Ainda posso colocar Trades*/
 														Type = 'T'.
 chooseType(_,_,_,_,_,Type) :- Type = 'C'.						
@@ -69,11 +69,11 @@ movement(1,_,Player,AllMoves,Ri,Ci,Rf,Cf) :-	playerGetType(Player,'C'), 						%C
 												getRandMove(ShipMoves,Rf,Cf) .								
 
 movement(2,Board,Player,AllMoves,Ri,Ci,Rf,Cf) :-	playerGetType(Player,'C'),						%COMPUTER
-													getPossibleMovesValued(Board,Player,ValuedList),
-													getBestMove(Board,Player,ValuedList,Ship,Pos),
+													getPossibleMovesValued(Board,Player,AllMoves,ValuedList),
+													getBestMove(ValuedList,Ship,Pos),
 													playerGetShips(Player,ListShips), 
-													nth1(Ship,ListShips,[Ri|[Ci|[]]]), 
-													nth1(Ship,AllMoves,Temp), nth1(Pos,Temp,[Rf|[Cf|[]]]) .															
+													getListElem(ListShips,Ship,[Ri|[Ci|[]]]),
+													getCell(AllMoves,Ship,Pos,[Rf|[Cf|[]]]) .													
 											
 movement(Nivel,Board,Player,AllMoves,Ri,Ci,Rf,Cf) :- 	error(4), movement(Nivel,Board,Player,AllMoves,Ri,Ci,Rf,Cf).
 

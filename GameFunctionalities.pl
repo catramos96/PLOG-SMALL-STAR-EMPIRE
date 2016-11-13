@@ -5,7 +5,7 @@
 :-include('GameFunctionalitiesAux.pl').
 
 /*
-loadPlayers
+loadPlayers(+Board,+Mode,-Player1,-Player2)
 Load the two players according to the selected Mode
 */
 loadPlayers(Board,Mode,Player1,Player2) :- 	getCell(Board,HomeRow1,HomeColumn1,[6,0,HomeNShips1]),		
@@ -22,7 +22,7 @@ loadMode(3,Player1I,Player2I,Player1F,Player2F)	:- playerSetType(Player1I,'C',Pl
 								
 								
 /*
-turn
+turn(+BoardI,+Level,+PlayerI,-BoardF,-PlayerF)
 Update the valid ships and get the Possible Moves to make a new move.
 If there are no more possible moves it returns false (Game Over).
 */							
@@ -34,7 +34,7 @@ turn(BoardI,Level,PlayerI,BoardF,PlayerF) :- 	updateValidShips(BoardI,PlayerI,Pt
 		
 		
 /*
-make_move
+make_move(+BoardI,+Level,+AllMoves,+PlayerI,-BoardF,-PlayerF)
 Makes a move and adds a control to the moved cell.
 */		
 make_move(BoardI,Level,AllMoves,PlayerI,BoardF,PlayerF) :-	movement(Level,BoardI,PlayerI,AllMoves,RowI,ColumnI,RowF,ColumnF), !,								
@@ -46,7 +46,7 @@ make_move(BoardI,Level,AllMoves,PlayerI,BoardF,PlayerF) :-	movement(Level,BoardI
 make_move(BoardI,Level,AllMoves,PlayerI,BoardF,PlayerF) :- make_move(BoardI,Level,AllMoves,PlayerI,BoardF,PlayerF).
 
 /*
-movement
+movement(+Nivel,+Board,+Player,+AllMoves,-RowI,-ColumnI,-RowF,-ColumnF)
 Gets the Ship position [Ri,ColumnI] and destination cell [Rf,ColumnF] conforming the level.
 True if the movement is valid.
 */														
@@ -69,7 +69,7 @@ movement(Level,Board,Player,AllMoves,RowI,ColumnI,RowF,ColumnF) :- 	error(4), mo
 
 
 /*
-addControl
+addControl(+Level,+BoardI,+PlayerI,+Row,+Column,-BoardF,-PlayerF)
 Adds a control dominated by the players team to the board.
 */								
 addControl(Level,BoardI,PlayerI,Row,Column,BoardF,PlayerF) :- 	addControlAux(Level,PlayerI,BoardI,Row,Column,Type), !,									%SUCCESS

@@ -5,7 +5,7 @@
 :-include('Bot.pl').
 		
 /*
-getPossibleMoves
+getPossibleMoves(+Board,+PlayerI,-AllMoves)
 Creates a matrix where each row (i) represents a PlayerI'Ship ship (in the position i of playerGetShips)
 Each row is a list of possible moves for a ship.
 */
@@ -17,7 +17,7 @@ possibleMovesAux(Board,Team,[Ship|Sn],T,AllMoves) :- 	getPosition(Ship,Row,Colum
 possibleMovesAux(_,_,_,AllMoves,AllMoves).
 
 /*
-validMove
+validMove(+AllMoves,+PlayerI,+RowI,+ColumnI,+RowF,+ColumnF)
 True if the [Ri,Ci] is a position of a ship
 and if [Rf,Cf] is in the list of possible moves for that ship
 */																				
@@ -29,7 +29,7 @@ validMove(AllMoves,PlayerI,RowI,ColumnI,RowF,ColumnF) :- 	playerGetShips(PlayerI
 validMove(_,_,_,_,_,_) :- 	error(1), fail.
 
 /*
-updateValidShips
+updateValidShips(+Board,+PlayerI,-PlayerF)
 removes the ships that have no longer possible moves
 */
 updateValidShips(Board,PlayerI,PlayerF) :- playerGetShips(PlayerI,Ships),validShips(Board,PlayerI,Ships,PlayerF).		
@@ -42,7 +42,7 @@ validShips(Board,PlayerI,[_|Sn],PlayerF) :- 	validShips(Board,PlayerI,Sn,PlayerF
 
 
 /*
-setShip
+setShip(+Board,+Row,C+olumn,+ShipsAdd,-Final)
 Sets a ship on the Row and Column of a Board, returns BoardF the changed board.
 If ShipsAdd 1, it increments a ship.
 If ShipsAdd -2, it decrements a ship.
@@ -55,7 +55,7 @@ setShip(Board,Row,Column,ShipsAdd,Final) :- 		getBoardCell(Board,Row,Column,Cell
 
 													
 /*
-setDominion
+setDominion(+Board,+Team,+Row,+Column,+Type,-Final) 
 Sets the dominion on the Row and Column Cof a board, returns BoardF the changed board.
 */												
 setDominion(Board,Team,Row,Column,Type,Final) :-	getBoardCell(Board,Row,Column,Cell),									%SET_DOMINION

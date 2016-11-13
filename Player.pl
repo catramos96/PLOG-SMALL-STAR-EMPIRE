@@ -6,7 +6,7 @@ player1 :- 	[1,0,[],[],[]].		/*[Team,Type,TradesPositions,ColoniesPositions,Ship
 player2 :-	[2,0,[],[],[]].
 
 /*
-createPlayer
+createPlayer(+Team,+NShips,+Base,-P)
 creates a player with Team and NShips in the position Base
 */
 createPlayer(Team,NShips,Base,P) :-	playerAddBaseShips([Team,' ',[],[],[]],NShips,Base,P).
@@ -53,20 +53,20 @@ playerAddColony(PlayerI,Position,PlayerF) :- 	getListElem(PlayerI,4,C), addList(
 playerAddShip(PlayerI,Position,PlayerF) :- 	getListElem(PlayerI,5,S), addList(Position,S,Sf), setList(Sf,PlayerI,5,PlayerF).
 
 /*
-playerRemShip
+playerRemShip(+PlayerI,+Position,-PlayerF)
 remove a ship with Position of the shipsPositions in the player
 */
 playerRemShip(PlayerI,Position,PlayerF) :-	playerGetShips(PlayerI,Ships), remList(Position,Ships,ShipsF), setList(ShipsF,PlayerI,5,PlayerF).	
 
 /*
-hasShip
+hasShip(+PlayerI,+Row,+Column)
 true if the player has a ship with the position [Row,Column]
 */
 hasShip(PlayerI,Row,Column) :- 	playerGetShips(PlayerI,Ships),
 								member([Row|[Column|[]]],Ships).
 
 /*
-displayPlayerInfo
+displayPlayerInfo(+Player)
 displays the information about the player
 */
 displayPlayerInfo(Player) :- 	write('TRADES: '),nl, playerGetTrades(Player,Trades), displayList(Trades), nl, nl,

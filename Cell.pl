@@ -18,7 +18,7 @@ systemType(6,'H',' ').		%HomeWorld
 systemType(7,'B',' ').		
 
 /*
-get Cell Information (cell)
+get Cell Information (+cell,-info)
 */
 getCellSystem([SystemId|[_|[_|[]]]],SystemId) :- systemType(SystemId,_,_).
 getCellDominion([_|[DominionId|[_|[]]]],DominionId) :- dominion(DominionId,_,_).
@@ -26,14 +26,14 @@ getCellShips([_|[_|[NShips|[]]]],NShips).
 getCellTeam(Cell,Team) :- 	getCellDominion(Cell,DominionId), dominion(DominionId,Team,_).
 
 /*
-set Cell Information (cell)
+set Cell Information (+cell,+newInfo,-newCell)
 */
 setCellSystem([_|[DominionId|[NShips|[]]]],NewSt,[NewSt|[DominionId|[NShips|[]]]]).
 setCellDominion([SystemId|[_|[NShips|[]]]],NewD,[SystemId|[NewD|[NShips|[]]]]).
 setCellShips([SystemId|[DominionId|[_|[]]]],NewS,[SystemId|[DominionId|[NewS|[]]]]).
 
 /*
-incCellShips
+incCellShips(+Cell,-NewCell)
 increment cell ships
 */
 incCellShips(Cell,NewCell) :- 	getCellShips(Cell,NShips),
@@ -41,7 +41,7 @@ incCellShips(Cell,NewCell) :- 	getCellShips(Cell,NShips),
 								setCellShips(Cell,NewS,NewCell).
 	
 /*
-decCellShips
+decCellShips(+Cell,-NewCell)
 decrement cell ships
 */
 decCellShips(Cell,NewCell) :- 	getCellShips(Cell,NShips),
@@ -49,7 +49,7 @@ decCellShips(Cell,NewCell) :- 	getCellShips(Cell,NShips),
 								setCellShips(Cell,NewS,NewCell).
 
 /*
-display Cell Information (Cell)
+display Cell Information (+Cell)
 */
 displayDominion(I) :- dominion(I,P,C), write(P), write(' '),write(C).
 displaySystem(I) :- systemType(I,A,B),write(A),write(' '),write(B).

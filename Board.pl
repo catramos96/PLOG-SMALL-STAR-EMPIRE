@@ -54,7 +54,8 @@ board(6,[[0,[1,-1,0],[5,-1,0],[2,-1,0],[0,-1,0]],		%TESTEINES_EXEMPLO
 		 [0,[3,-1,0],[5,-1,0],[0,-1,0],[4,-1,0]]]).
 
 /*
-displayBoard (board)
+displayBoard(+board)
+displayBoard(+boardMatrix)
 */
  
 displayBoard(I) :- board(I,S) , displayBoard(S).
@@ -89,7 +90,7 @@ displayInfo2([IDs|[IDp|[N|[]]]]) :- systemType(IDs,_,_), dominion(IDp,_,_), writ
 displayInfo3([IDs|[IDp|[_|[]]]]) :- systemType(IDs,_,_), dominion(IDp,_,_), write('|'),displayDominion(IDp).
 
 /*
-getBoardCell  (board)
+getBoardCell(+Board,+Row,+Column,-Cell)
 Returns the element in the row and Column of the Board
 If the element is 0 it doesn't count as a column
 */
@@ -97,7 +98,7 @@ getBoardCell(Board,Row,Column,Cell) :- getCell(Board,Row,1,X), X == 0 ,!,NewColu
 getBoardCell(Board,Row,Column,Cell) :- getCell(Board,Row,Column,Cell).
 
 /*
-setBoardCell  (board)
+setBoardCell(+BoardI,+Row,+Column,+Cell,-BoardF)
 Returns a new Board where the element in Row and Column is Cell
 If the element is 0 it doesn't count as a column
 */
@@ -106,7 +107,7 @@ setBoardCell(BoardI,Row,Column,Cell,BoardF) :- setCellValue(BoardI,Row,Column,Ce
 
 
 /*
-getCellInDirection  (board)
+getCellInDirection(+Board,+RowI,+ColumnI,+Direction,+RowF,+ColumnF,-Cell)
 Returns the adjacent Cell of (Ri,Ci) in a direction and the (Rf,Cf)
   |1| |2|
 |3| |x| |4| Numbers - directions from cell 'x'
@@ -132,7 +133,7 @@ directionAux(_,RowI,ColumnI,Rinc,Cinc,RowF,ColumnF) :- 	((Cinc is -1, ColumnF is
 														(ColumnF > 0) , (RowF > 0).
 											
 /*
-freeCellInDirection  (board)
+freeCellInDirection(+Board,+Team,+RowI,+ColumnI,+Direction,-RowF,-ColumnF)
 Returns the next free position in a direction from the inicial row and column
 It can overpass Cells dominated by Team
 */									
@@ -143,25 +144,25 @@ freeCellInDirection(Board,Team,RowI,ColumnI,Direction,RowF,ColumnF) :-	 getCellI
 
 	
 /*
-getAdjCells  (board)
+getAdjCells(+BoardI,+Row,+Column,-Cells)
 Given an inicial Row and Column it returns a List F of the adjacent Cells
 */										
-getAdjCells(BoardI,Row,Column,BoardF)	:- 	adjCellsAux(BoardI,Row,Column,1,[],T1), !,												%GET_ADJ_CELLS
+getAdjCells(BoardI,Row,Column,Cells)	:- 	adjCellsAux(BoardI,Row,Column,1,[],T1), !,												%GET_ADJ_CELLS
 											adjCellsAux(BoardI,Row,Column,2,T1,T2), !,
 											adjCellsAux(BoardI,Row,Column,3,T2,T3), !,
 											adjCellsAux(BoardI,Row,Column,4,T3,T4), !,						
 											adjCellsAux(BoardI,Row,Column,5,T4,T5), !,
-											adjCellsAux(BoardI,Row,Column,6,T5,BoardF).
+											adjCellsAux(BoardI,Row,Column,6,T5,Cells).
 
 
 
-adjCellsAux(BoardI,Row,Column,Direction,T,BoardF) :- 	getCellInDirection(BoardI,Row,Column,Direction,Rf,Cf,_), !,
-														append(T,[[Rf|Cf]|[]],BoardF).								
+adjCellsAux(BoardI,Row,Column,Direction,T,Cells) :- 	getCellInDirection(BoardI,Row,Column,Direction,Rf,Cf,_), !,
+														append(T,[[Rf|Cf]|[]],Cells).								
 adjCellsAux(_,_,_,_,T,T).
 		
 
 /*
-getAdjFreeCells  (board)
+getAdjFreeCells(+Board,+Row,+Column,+Team,-Cells)
 Returns F a list of all the free adjecent Cells from R and C until the board's limits
 */
 getAdjFreeCells(Board,Row,Column,Team,Cells) :- 	getAdjFreeCellsAux(Board,Row,Column,1,Team,[],T1), !,										%GET_ADJ_FREE_CELLS

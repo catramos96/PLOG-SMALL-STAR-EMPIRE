@@ -11,7 +11,7 @@
 													
 
 /*
-play(BoardI,Nivel,Team,Player1I,Player2I,Player1F,Player2F,BoardF)
+play(+BoardI,+Nivel,+Team,+Player1I,+Player2I,-Player1F,-Player2F,-BoardF)
 Predicate that does a turn of the initial player with the team T (PlayerTI) returning a temporary Board (BoardT) and Player (PlayerTT)
 Gives the other player's Team the chance to play with the modified Board and Player.
 If the players turn is false, then the Final Board and Players are equal to the Initial Ones

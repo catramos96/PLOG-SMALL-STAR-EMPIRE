@@ -5,7 +5,7 @@
 clearscreen :- write('\e[2J').
 
 /*
-header
+header(+Title)
 displays a title with a border
 */
 header(Title) :-	write('*****************************'),nl,
@@ -13,7 +13,7 @@ header(Title) :-	write('*****************************'),nl,
 					write('*****************************'),nl,nl.
 
 /*
-menu
+menu(+Choice)
 Inicial menu and options
 */					
 menu(Choice) :-	clearscreen,
@@ -23,7 +23,7 @@ menu(Choice) :-	clearscreen,
 				read(Choice).
 
 /*
-game_settings
+game_settings(-Board,-Nivel,-Mode)
 Game settings to play
 */
 game_settings(Board,Nivel,Mode) :- 	clearscreen,
@@ -50,7 +50,7 @@ game_settings(Board,Nivel,Mode) :- 	clearscreen,
 game_settings(Board,Nivel,Mode) :- error(5) , game_settings(Board,Nivel,Mode).
 	
 /*
-displayTurn
+displayTurn(+Board,+Player,+Moves)
 Displays the information about the player and the board
 */
 displayTurn(Board,Player,Moves) :-	clearscreen,
@@ -62,7 +62,7 @@ displayTurn(Board,Player,Moves) :-	clearscreen,
 									displayPossibleMoves(Player,Moves).
 	
 /*
-moveShip_settings
+moveShip_settings(-RowI,-ColumnI,-RowF,-ColumnF)
 Move ship options
 */								
 moveShip_settings(RowI,ColumnI,RowF,ColumnF) :- 	write('CHOOSE SHIP'), nl,
@@ -74,7 +74,7 @@ moveShip_settings(RowI,ColumnI,RowF,ColumnF) :- 	write('CHOOSE SHIP'), nl,
 													number(RowI),number(ColumnI),number(RowF),number(ColumnF).
 
 /*
-addDominion_settings
+addDominion_settings(-Type)
 Add Dominion options
 */									
 addDominion_settings(Type) :- 	write('CHOOSE DOMINION'),nl,
@@ -85,7 +85,7 @@ addDominion_settings(Type) :- 	write('CHOOSE DOMINION'),nl,
 	
 
 /*
-displayPossibleMoves
+displayPossibleMoves(+Player,+Moves)
 Displays the possibles moves for each Ship
 */									
 displayPossibleMoves(Player,Moves) :- 	playerGetShips(Player,S) , write('POSSIBLE MOVES:'),nl,
@@ -97,7 +97,7 @@ displayMovesAux([S|Sn],[Moves|Mn]) :- 	write(' SHIP - '), write(S), write('    '
 										displayMovesAux(Sn,Mn).
 								
 /*
-displayWinner
+displayWinner(-Board,-Player,-Points1,-Points2)
 Displays the winner and the points of the two players
 */									
 displayWinner(Board,Player,Points1,Points2) :-	clearscreen,
@@ -121,7 +121,7 @@ displayBoardInfo :- write('System    Type'),nl,
 					write('Dom:   (C) Colony  (T) Trade Center'), nl,nl.
 
 /*
-error
+error(+T)
 Displays the error Message T
 */
 					

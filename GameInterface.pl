@@ -81,7 +81,7 @@ displayWinner(Board,Player,Points1,Points2) :-	clearscreen,
 												write('THE WINNER IS - '), playerTeamName(Player,TName), write(TName),nl,nl,
 												write(' Blue Team '), write(Points1), write(' POINTS!'),nl,
 												write(' Red Team '), write(Points2), write(' POINTS!'),nl,nl,
-												write('Press 0. to continue'), read(_).
+												write('Press some key and . to continue'), read(_).
 									
 error(T) :- write('WARNING'), nl, errorMsg(T), nl, nl.
 errorMsg(1) :- write('Invalid movement').

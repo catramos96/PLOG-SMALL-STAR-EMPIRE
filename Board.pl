@@ -58,12 +58,16 @@ displayBoard (board)
 */
  
 displayBoard(I) :- board(I,S) , displayBoard(S).
-displayBoard([L1|L2]) :- nl, displayTopLine(L1), displayMatrix2D([L1|L2]).
+displayBoard([L1|L2]) :- nl, write('     '), displayColumnN(L1,1), write('  ') ,displayTopLine(L1), displayMatrix2D([L1|L2],1).
 
-displayMatrix2D([]) :- nl .
-displayMatrix2D([L1|L2]) :- displayLine(L1),nl, displayMatrix2D(L2).
+displayMatrix2D([],_) :- nl .
+displayMatrix2D([L1|L2],Row) :- displayLine(L1,Row),nl, Row1 is Row + 1,displayMatrix2D(L2,Row1).
 
-displayLine([L1|L2]) :- displayLine1([L1|L2]), displayLine2([L1|L2]), displayLine3([L1|L2]),displayBottomLine([L1|L2]).	%LINE
+displayLine([L1|L2],Row) :- write('  '),displayLine1([L1|L2]), write(' '),write(Row),displayLine2([L1|L2]), 
+							write('  '),displayLine3([L1|L2]),write('  '),displayBottomLine([L1|L2]).	%LINE
+							
+displayColumnN([],_) :-	nl, nl.					
+displayColumnN([_|E2],C) :- write(C),write('   '), C1 is C + 1, displayColumnN(E2,C1).				%COLUMN_NUMBERS
 
 displayTopLine([]):- nl.
 displayTopLine([E1|E2]) :- ((E1 == 0 , write('  ')); write(' / \\')),displayTopLine(E2).			%TOP_LINE_LIMIT

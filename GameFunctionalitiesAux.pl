@@ -10,10 +10,10 @@ Creates a matrix where each row (i) represents a PlayerI'Ship ship (in the posit
 Each row is a list of possible moves for a ship.
 */
 getPossibleMoves(Board,PlayerI,AllMoves) :- playerGetShips(PlayerI,Ships), playerGetTeam(PlayerI,Team),
-									possibleMovesAux(Board,Team,Ships,[],AllMoves).
+											possibleMovesAux(Board,Team,Ships,[],AllMoves).
 
 possibleMovesAux(Board,Team,[Ship|Sn],T,AllMoves) :- 	getPosition(Ship,Row,Column),nl,getAdjFreeCells(Board,Row,Column,Team,Cells),
-													append(T,[Cells|[]],T1), possibleMovesAux(Board,Team,Sn,T1,AllMoves).
+														append(T,[Cells|[]],T1), possibleMovesAux(Board,Team,Sn,T1,AllMoves).
 possibleMovesAux(_,_,_,AllMoves,AllMoves).
 
 /*

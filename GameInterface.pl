@@ -78,8 +78,8 @@ addDominion_settings
 Add Dominion options
 */									
 addDominion_settings(Type) :- 	write('CHOOSE DOMINION'),nl,
-								write(' (C) Colony'),nl,
-								write(' (T) Trade'),nl,
+								write(' (\'C\') Colony'),nl,
+								write(' (\'T\') Trade'),nl,
 								read(Type), nl,
 								(Type == 'C' ; Type == 'T').
 	

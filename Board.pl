@@ -107,7 +107,7 @@ setBoardCell(BoardI,Row,Column,Cell,BoardF) :- setCellValue(BoardI,Row,Column,Ce
 
 /*
 getCellInDirection  (board)
-Returns the adjacent Cell of (Ri,Rf) in a direction
+Returns the adjacent Cell of (Ri,Ci) in a direction and the (Rf,Cf)
   |1| |2|
 |3| |x| |4| Numbers - directions from cell 'x'
   |5| |6|
@@ -134,6 +134,7 @@ directionAux(_,RowI,ColumnI,Rinc,Cinc,RowF,ColumnF) :- 	((Cinc is -1, ColumnF is
 /*
 freeCellInDirection  (board)
 Returns the next free position in a direction from the inicial row and column
+It can overpass Cells dominated by Team
 */									
 freeCellInDirection(Board,Team,RowI,ColumnI,Direction,RowF,ColumnF) :-	 getCellInDirection(Board,RowI,ColumnI,Direction,RowT,ColumnT,Cell), !,	%GET_FREE_CELL_IN_DIRECTION
 																	(	(getCellDominion(Cell,-1) , getCellSystem(Cell,System),System \= 7, RowF is RowT, ColumnF is ColumnT);		

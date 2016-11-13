@@ -36,12 +36,15 @@ moveShip_settings(Ri,Ci,Rf,Cf) :- 	write('CHOOSE SHIP'), nl,
 									write(' To Column'),read(Cf), nl,
 									number(Ri),number(Ci),number(Rf),number(Cf).
 										
-addDominion_settings(Type) :- 	write('Colony(C) or Trade(T): '),read(Type), nl,
+addDominion_settings(Type) :- 	write('CHOOSE DOMINION'),nl,
+								write(' (C) Colony'),nl,
+								write(' (T) Trade'),nl,
+								read(Type), nl,
 								(Type == 'C' ; Type == 'T').
 	
 %OUTPUTS
 	
-displayTurn(Board,Player,Moves) :-	/*clearscreen,*/
+displayTurn(Board,Player,Moves) :-	clearscreen,
 									write('NEW TURN - '),
 									displayTeamName(Player),
 									displayBoard(Board),
@@ -52,7 +55,7 @@ displayPossibleMoves(P,M) :- 		playerGetShips(P,S) , write('POSSIBLE MOVES:'),nl
 									displayMovesAux(S,M),nl, nl.
 displayMovesAux([],_).
 displayMovesAux(_,[]).
-displayMovesAux([S|Sn],[M|Mn]) :- 	write('SHIP - '), write(S), write('    '),
+displayMovesAux([S|Sn],[M|Mn]) :- 	write(' SHIP - '), write(S), write('    '),
 									displayList(M),nl, !,
 									displayMovesAux(Sn,Mn).
 								
@@ -60,8 +63,8 @@ displayMovesAux([S|Sn],[M|Mn]) :- 	write('SHIP - '), write(S), write('    '),
 									
 displayWinner(Board,Player,Points1,Points2) :-	displayBoard(Board), nl,
 												write('THE WINNER IS - '), displayTeamName(Player),nl, 
-												write('BLUE TEAM '), write(Points1), write(' POINTS!'),nl,
-												write('RED TEAM '), write(Points2), write(' POINTS!'),nl .
+												write(' BLUE TEAM '), write(Points1), write(' POINTS!'),nl,
+												write(' RED TEAM '), write(Points2), write(' POINTS!'),nl .
 									
 error(T) :- write('WARNING'), nl, errorMsg(T), nl, nl.
 errorMsg(1) :- write('Invalid movement').

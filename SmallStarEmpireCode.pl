@@ -23,6 +23,5 @@ play(Board,_,_,P1,P2,P1,P2,Board).
 								
 game :- game_settings(Board,Nivel,P1,P2), !,
 		random(1,3,Team), !,
-		write(Team) ,nl,
 		play(Board,Nivel,Team,P1,P2,P1f,P2f,Bf), !,
 		winner(Bf,P1f,P2f).

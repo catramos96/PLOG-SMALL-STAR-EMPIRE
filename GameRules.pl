@@ -33,8 +33,7 @@ getValue(SystemType,4) :- (SystemType == 4 ; SystemType == 5).								%TEMPORARI
 getValue(_,0).
 
 /* Ship e Pos correspondem a row e col a procurar no AllMoves */
-getBestMove(Board,Player,Ship,Pos) :- 	getPossibleMovesValued(Board,Player,ValuedList),
-										searchBestMove(ValuedList,ValuedList,1,1,1,Ship,Pos).
+getBestMove(Board,Player,ValuedList,Ship,Pos) :- searchBestMove(ValuedList,ValuedList,1,1,1,Ship,Pos).
 
 searchBestMove(_,[],_,BestR,BestC,BestR,BestC) .
 searchBestMove(ValuedList,[Row|Remainder],Ri,Rt,Ct,BestR,BestC) :- 	searchBestMoveByShip(ValuedList,Row,Ri,1,Rt,Ct,PartR,PartC),

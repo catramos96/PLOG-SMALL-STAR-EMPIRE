@@ -9,11 +9,12 @@
 
 ## Modo HumanoVSHumano
 
-* Já está acabado em principio
-
 ## Interface
+
+* Fazer Random da equipa para os jogadores
 
 ## Geral
 
 * Fazer get_char em vez de read
-* Melhorar display do board
+* Processar Whormholes
+* Pode voltar para o HomeBase

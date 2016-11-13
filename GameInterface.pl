@@ -92,6 +92,16 @@ errorMsg(3) :- write('Could not load players, wrong board').
 errorMsg(4) :- write('Values must be numbers > 0').
 errorMsg(5) :- write('Wrong Arguments').
 errorMsg(6) :- write('You have Placed 4 Trades already').
+
+boardInfo :- write('=============== BOARD INFO ==============='), nl, nl,
+			 write('System---Type'),nl,
+			 write('----Ships----'),nl,
+			 write('Team------Dom'),nl,  
+			 write('Cell(Type,Prop,Team,Aloc,NShips)'), nl, nl,
+			 write('Type:  (H) - HomeBase  (S) - Star System  (N) - Nebula System  (B) - Blackhole  (W) - Whormhole'), nl,
+			 write('Properties:  0-3 - Planets  (R)/(B) - Color'), nl,
+			 write('Team:  (1)- Red team  (2) - Blue team'), nl,
+			 write('Alocated:  (C) - Colony  (T) Trade Center'), nl,nl.
 									
 									
 									

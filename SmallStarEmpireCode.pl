@@ -21,7 +21,11 @@ play(Board,Nivel,2,P1i,P2i,P1f,P2f,FinalBoard) :- 	turn(Board,Nivel,P2i,BoardT,P
 													play(BoardT,Nivel,1,P1i,P2t,P1f,P2f,FinalBoard).											
 play(Board,_,_,P1,P2,P1,P2,Board).
 								
-game :- game_settings(Board,Nivel,P1,P2), !,
+game :- menu(Choice), Choice is 1,
+		game_settings(Board,Nivel,Mode), !,
+		loadPlayers(Board,Mode,P1,P2), !,
 		random(1,3,Team), !,
 		play(Board,Nivel,Team,P1,P2,P1f,P2f,Bf), !,
-		winner(Bf,P1f,P2f).
+		winner(Bf,P1f,P2f), game.
+		
+game :- clearscreen.

@@ -4,9 +4,23 @@
 
 clearscreen :- write('\e[2J').
 
-%INPUTS
+header(Title) :-	write('*****************************'),nl,
+					write(Title), nl,
+					write('*****************************'),nl,nl.
+					
+					
+teste :- repeat,
+		write('hello'),
+		 read(X), X is 1.
+					
+menu(Choice) :-	clearscreen,
+				header('SMALL STAR EMPIIRE'),
+				write(' (1) PLAY'),nl,nl,
+				write(' (2) EXIT'),nl,nl,
+				read(Choice).
 
-game_settings(Board,Nivel,P1,P2) :- 	clearscreen,
+game_settings(Board,Nivel,Mode) :- 	clearscreen,
+										header('GAME OPTIONS'),
 										write('BOARD SETTINGS'), nl,
 											write(' (1) BoardsId'), nl,
 											read(BoardId), nl, nl,
@@ -22,8 +36,8 @@ game_settings(Board,Nivel,P1,P2) :- 	clearscreen,
 												write('(2) HARD'),nl,
 												read(Nivel), nl,nl) ;
 											(Mode is 1, Nivel is 0)	
-										),								 
-										loadPlayers(Board,Mode,P1,P2).
+										).							 
+										
 								
 game_settings(Board,Nivel,P1,P2) :- error(5) , game_settings(Board,Nivel,P1,P2).
 								
@@ -45,8 +59,8 @@ addDominion_settings(Type) :- 	write('CHOOSE DOMINION'),nl,
 %OUTPUTS
 	
 displayTurn(Board,Player,Moves) :-	clearscreen,
-									write('NEW TURN - '),
-									displayTeamName(Player),
+									playerTeamName(Player,TName),
+									header(TName),
 									displayBoard(Board),
 									displayPlayerInfo(Player),
 									displayPossibleMoves(Player,Moves).
@@ -62,10 +76,12 @@ displayMovesAux([S|Sn],[M|Mn]) :- 	write(' SHIP - '), write(S), write('    '),
 								
 									
 displayWinner(Board,Player,Points1,Points2) :-	clearscreen,
+												header('GAME OVER'),
 												displayBoard(Board), nl,
-												write('THE WINNER IS - '), displayTeamName(Player),nl, 
-												write(' BLUE TEAM '), write(Points1), write(' POINTS!'),nl,
-												write(' RED TEAM '), write(Points2), write(' POINTS!'),nl .
+												write('THE WINNER IS - '), playerTeamName(Player,TName), write(TName),nl,nl,
+												write(' Blue Team '), write(Points1), write(' POINTS!'),nl,
+												write(' Red Team '), write(Points2), write(' POINTS!'),nl,nl,
+												write('Press 0. to continue'), read(_).
 									
 error(T) :- write('WARNING'), nl, errorMsg(T), nl, nl.
 errorMsg(1) :- write('Invalid movement').

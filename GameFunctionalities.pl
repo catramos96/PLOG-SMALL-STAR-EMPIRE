@@ -12,7 +12,9 @@ loadPlayers(Board,Mode,P1f,P2f) :- 	getCell(Board,R1,C1,[6,0,N1]),
 									loadMode(Mode,Pt1,Pt2,P1f,P2f).
 
 loadMode(1,P1i,P2i,P1f,P2f) :- playerSetType(P1i,'H',P1f),playerSetType(P2i,'H',P2f).
-loadMode(2,P1i,P2i,P1f,P2f)	:- playerSetType(P1i,'C',P1f),playerSetType(P2i,'H',P2f).
+loadMode(2,P1i,P2i,P1f,P2f)	:- 	random(1,3,R),
+								((R is 1, playerSetType(P1i,'C',P1f),playerSetType(P2i,'H',P2f)) ;
+								 (R is 2, playerSetType(P1i,'H',P1f),playerSetType(P2i,'C',P2f))).
 loadMode(3,P1i,P2i,P1f,P2f)	:- playerSetType(P1i,'C',P1f),playerSetType(P2i,'C',P2f).
 								
 								

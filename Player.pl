@@ -14,7 +14,11 @@ playerAddBaseShips(Pi,NShips,Base,Pf) :- 	NShips \= 0,
 
 playerAddBaseShips(Pi,_,_,Pi).
 	
-%GETS	
+%GETS
+playerTeamName(P,'BLUE TEAM') :- 	playerGetTeam(P,T), T is 1.
+
+playerTeamName(P,'RED TEAM') :-	playerGetTeam(P,T), T is 2.	
+					
 playerGetTeam(Player,T) :-		getListElem(Player,1,T).
 playerGetType(Player,T) :-		getListElem(Player,2,T).
 playerGetTrades(Player,T) :- 	getListElem(Player,3,T).
@@ -47,11 +51,6 @@ hasShip(Pi,Row,Column) :- 	playerGetShips(Pi,S),
 								member([Row|[Column|[]]],S).
 
 %DISPLAYS
-displayTeamName(P) :- 	playerGetTeam(P,T), T is 1, !,
-						write('Blue Team'),nl.
-
-displayTeamName(P) :-	playerGetTeam(P,T), T is 2, !,
-						write('Red Team'),nl.
 
 displayPlayerInfo(Player) :- 	write('TRADES: '),nl, playerGetTrades(Player,Trades), displayList(Trades), nl, nl,
 								write('COLONIES: '), nl ,playerGetColonies(Player,Colonies),displayList(Colonies), nl, nl,

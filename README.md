@@ -12,6 +12,7 @@
 ## Interface
 
 * Fazer Random da equipa para os jogadores
+* Menu Inicial que pergunta se quer jogar ou sair e depois tem um repeat no modo jogar para voltar sempre ao menu iniciar e só ai é que se pode sair
 
 ## Geral
 

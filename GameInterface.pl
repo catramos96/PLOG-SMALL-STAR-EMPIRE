@@ -22,7 +22,9 @@ menu(Choice) :-	clearscreen,
 game_settings(Board,Nivel,Mode) :- 	clearscreen,
 										header('GAME OPTIONS'),
 										write('BOARD SETTINGS'), nl,
-											write(' (1) BoardsId'), nl,
+											write(' (1) SMALL'), nl,
+											write(' (2) MEDIUM'), nl,
+											write(' (3) BIG'),nl,
 											read(BoardId), nl, nl,
 										board(BoardId,Board),
 										write('GAME MODE'), nl,
@@ -39,7 +41,7 @@ game_settings(Board,Nivel,Mode) :- 	clearscreen,
 										).							 
 										
 								
-game_settings(Board,Nivel,P1,P2) :- error(5) , game_settings(Board,Nivel,P1,P2).
+game_settings(Board,Nivel,Mode) :- error(5) , game_settings(Board,Nivel,Mode).
 								
 								
 moveShip_settings(Ri,Ci,Rf,Cf) :- 	write('CHOOSE SHIP'), nl,

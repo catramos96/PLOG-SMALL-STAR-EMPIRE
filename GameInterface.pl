@@ -112,9 +112,9 @@ displayWinner(Board,Player,Points1,Points2) :-	clearscreen,
 displayBoardInfo
 Displays information about the board cells
 */
-displayBoardInfo :- write('System---Type'),nl,
-					write('----Ships----'),nl,
-					write('Team------Dom'),nl,
+displayBoardInfo :- write('System    Type'),nl,
+					write('     Ships'),nl,
+					write(' Team     Dom'),nl,
 					write('System:(H) HomeBase  (S) Star  (N) Nebula  (B) Blackhole'), nl,
 					write('Type:  (0-3) Planets  (R) Red  (B) Blue'), nl,
 					write('Team:  (1) Red team (2) Blue team'), nl,

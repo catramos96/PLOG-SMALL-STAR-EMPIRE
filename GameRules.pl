@@ -91,7 +91,7 @@ setDominion(Board,Team,Row,Column,Type,Final) :-	getBoardCell(Board,Row,Column,C
 
 chooseType(Board,Player,AdjCells,MyTeam,Type)	:- 	getTradePointsAux(Board,AdjCells,MyTeam,0,Num),
 													Num > 0, 
-													getListElem(Player,2,Trades),
+													playerGetTrades(Player,Trades),
 													length(Trades,Length), Length < 4, 	/* Ainda posso colocar Trades*/
 													Type = 'T'.
 chooseType(_,_,_,_,Type) :- Type = 'C'.	

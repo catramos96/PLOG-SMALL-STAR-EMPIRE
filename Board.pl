@@ -163,19 +163,19 @@ adjCellsAux(_,_,_,_,T,T).
 getAdjFreeCells  (board)
 Returns F a list of all the free adjecent Cells from R and C until the board's limits
 */
-getAdjFreeCells(BoardI,Row,Column,Team,BoardF) :- 	getAdjFreeCellsAux(BoardI,Row,Column,1,Team,[],T1), !,										%GET_ADJ_FREE_CELLS
-													getAdjFreeCellsAux(BoardI,Row,Column,2,Team,T1,T2), !,
-													getAdjFreeCellsAux(BoardI,Row,Column,3,Team,T2,T3), !,
-													getAdjFreeCellsAux(BoardI,Row,Column,4,Team,T3,T4), !,
-													getAdjFreeCellsAux(BoardI,Row,Column,5,Team,T4,T5), !,
-													getAdjFreeCellsAux(BoardI,Row,Column,6,Team,T5,BoardF).
+getAdjFreeCells(Board,Row,Column,Team,Cells) :- 	getAdjFreeCellsAux(Board,Row,Column,1,Team,[],T1), !,										%GET_ADJ_FREE_CELLS
+													getAdjFreeCellsAux(Board,Row,Column,2,Team,T1,T2), !,
+													getAdjFreeCellsAux(Board,Row,Column,3,Team,T2,T3), !,
+													getAdjFreeCellsAux(Board,Row,Column,4,Team,T3,T4), !,
+													getAdjFreeCellsAux(Board,Row,Column,5,Team,T4,T5), !,
+													getAdjFreeCellsAux(Board,Row,Column,6,Team,T5,Cells).
 
-getAdjFreeCellsAux(BoardI,Row,Column,Direction,Team,Tmp,BoardF) :- 	getAllFreeCellsInDirection(BoardI,Row,Column,Direction,Team,[],Tmp2), 
-										append(Tmp,Tmp2,BoardF).
+getAdjFreeCellsAux(Board,Row,Column,Direction,Team,Tmp,Cells) :- 	getAllFreeCellsInDirection(Board,Row,Column,Direction,Team,[],Tmp2), 
+																	append(Tmp,Tmp2,Cells).
 										
 
-getAllFreeCellsInDirection(BoardI,Row,Column,Direction,Team,Tmp,BoardF) :- 	freeCellInDirection(BoardI,Team,Row,Column,Direction,Rf,Cf), !,
-												append(Tmp,[[Rf|[Cf|[]]]|[]],Tmp2),
-												getAllFreeCellsInDirection(BoardI,Rf,Cf,Direction,Team,Tmp2,BoardF).
-getAllFreeCellsInDirection(_,_,_,_,_,BoardF,BoardF).	
+getAllFreeCellsInDirection(Board,Row,Column,Direction,Team,Tmp,Cells) :- 	freeCellInDirection(Board,Team,Row,Column,Direction,Rf,Cf), !,
+																			append(Tmp,[[Rf|[Cf|[]]]|[]],Tmp2),
+																			getAllFreeCellsInDirection(Board,Rf,Cf,Direction,Team,Tmp2,Cells).
+getAllFreeCellsInDirection(_,_,_,_,_,Cells,Cells).	
 									

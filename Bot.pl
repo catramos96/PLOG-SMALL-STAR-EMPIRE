@@ -2,6 +2,9 @@
 *		   BOT			*
 ************************/
 
+/*
+This method 
+*/
 chooseType(Board,Player,AdjCells,MyTeam,Type)	:- 	getTradePointsAux(Board,AdjCells,MyTeam,0,Num),
 													Num > 0, 
 													playerGetTrades(Player,Trades),
@@ -9,9 +12,9 @@ chooseType(Board,Player,AdjCells,MyTeam,Type)	:- 	getTradePointsAux(Board,AdjCel
 													Type = 'T'.
 chooseType(_,_,_,_,Type) :- Type = 'C'.	
 
-chooseType(Nivel,Board,Player,AdjCells,MyTeam,Type)	:-  getTradePointsAux(Board,AdjCells,MyTeam,0,Num),
-														((Nivel == 2, Num > 1) ; 
-														(Nivel == 1, Num > 0)) ,
+chooseType(Level,Board,Player,AdjCells,MyTeam,Type)	:-  getTradePointsAux(Board,AdjCells,MyTeam,0,Num),
+														((Level == 2, Num > 1) ; 
+														(Level == 1, Num > 0)) ,
 														playerGetTrades(Player,Trades),
 														length(Trades,Length), Length < 4, 	/* Ainda posso colocar Trades*/
 														Type = 'T'.

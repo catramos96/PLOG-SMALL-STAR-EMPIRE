@@ -26,24 +26,24 @@ turn
 Update the valid ships and get the Possible Moves to make a new move.
 If there are no more possible moves it returns false (Game Over).
 */							
-turn(BoardI,Nivel,PlayerI,BoardF,PlayerF) :- 	updateValidShips(BoardI,PlayerI,Pt1), !,
+turn(BoardI,Level,PlayerI,BoardF,PlayerF) :- 	updateValidShips(BoardI,PlayerI,Pt1), !,
 												getPossibleMoves(BoardI,Pt1,AllMoves), !,
 												AllMoves \= [],									/*Game Over if M = []*/
 												displayTurn(BoardI,Pt1,AllMoves), 
-												make_move(BoardI,Nivel,AllMoves,Pt1,BoardF,PlayerF).
+												make_move(BoardI,Level,AllMoves,Pt1,BoardF,PlayerF).
 		
 		
 /*
 make_move
 Makes a move and adds a control to the moved cell.
 */		
-make_move(BoardI,Nivel,AllMoves,PlayerI,BoardF,PlayerF) :-	movement(Nivel,BoardI,PlayerI,AllMoves,RowI,ColumnI,RowF,ColumnF), !,								
-															addControl(Nivel,BoardI,PlayerI,RowF,ColumnF,Tmp1,PlayerT), !,
+make_move(BoardI,Level,AllMoves,PlayerI,BoardF,PlayerF) :-	movement(Level,BoardI,PlayerI,AllMoves,RowI,ColumnI,RowF,ColumnF), !,								
+															addControl(Level,BoardI,PlayerI,RowF,ColumnF,Tmp1,PlayerT), !,
 															setShip(Tmp1,RowF,ColumnF,1,Tmp2), !,
 															setShip(Tmp2,RowI,ColumnI,-1,BoardF), !,
 															playerSetShip(PlayerT,[RowI|[ColumnI|[]]],[RowF|[ColumnF|[]]],PlayerF).	
 												
-make_move(BoardI,Nivel,AllMoves,PlayerI,BoardF,PlayerF) :- make_move(BoardI,Nivel,AllMoves,PlayerI,BoardF,PlayerF).
+make_move(BoardI,Level,AllMoves,PlayerI,BoardF,PlayerF) :- make_move(BoardI,Level,AllMoves,PlayerI,BoardF,PlayerF).
 
 /*
 movement
@@ -65,28 +65,26 @@ movement(2,Board,Player,AllMoves,RowI,ColumnI,RowF,ColumnF) :-	playerGetType(Pla
 																getListElem(ListShips,Ship,[RowI|[ColumnI|[]]]),
 																getCell(AllMoves,Ship,Pos,[RowF|[ColumnF|[]]]) .													
 											
-movement(Nivel,Board,Player,AllMoves,RowI,ColumnI,RowF,ColumnF) :- 	error(4), movement(Nivel,Board,Player,AllMoves,RowI,ColumnI,RowF,ColumnF).
+movement(Level,Board,Player,AllMoves,RowI,ColumnI,RowF,ColumnF) :- 	error(4), movement(Level,Board,Player,AllMoves,RowI,ColumnI,RowF,ColumnF).
 
-							
-							
+
 /*
 addControl
 Adds a control dominated by the players team to the board.
-*/
-									
-addControl(Nivel,BoardI,PlayerI,Row,Column,BoardF,PlayerF) :- 	addControlAux(Nivel,PlayerI,BoardI,Row,Column,Type), !,									%SUCCESS
+*/								
+addControl(Level,BoardI,PlayerI,Row,Column,BoardF,PlayerF) :- 	addControlAux(Level,PlayerI,BoardI,Row,Column,Type), !,									%SUCCESS
 																playerGetTeam(PlayerI,Team),	
 																\+ (Type == 'T', playerGetTrades(PlayerI,Trades),length(Trades,L), L >= 4,error(6)),
 																setDominion(BoardI,Team,Row,Column,Type,BoardF), !,
 																playerAddControl(PlayerI,Type,[Row|[Column|[]]],PlayerF).		
 										
-addControl(Nivel,BoardI,PlayerI,Row,Column,BoardF,PlayerF) :- error(2), addControl(Nivel,BoardI,PlayerI,Row,Column,BoardF,PlayerF).					%FAIL
+addControl(Level,BoardI,PlayerI,Row,Column,BoardF,PlayerF) :- error(2), addControl(Level,BoardI,PlayerI,Row,Column,BoardF,PlayerF).					%FAIL
 			
 
 addControlAux(_,Player,_,_,_,Type) :- 	playerGetType(Player,'H'),
 										addDominion_settings(Type) .		
 
-addControlAux(Nivel,Player,BoardI,Row,Column,Type) :- 	playerGetType(Player,'C'),
+addControlAux(Level,Player,BoardI,Row,Column,Type) :- 	playerGetType(Player,'C'),
 														getAdjCells(BoardI,Row,Column,AdjCells),
 														playerGetTeam(Player,MyTeam),
-														chooseType(Nivel,BoardI,Player,AdjCells,MyTeam,Type) .							
+														chooseType(Level,BoardI,Player,AdjCells,MyTeam,Type) .							

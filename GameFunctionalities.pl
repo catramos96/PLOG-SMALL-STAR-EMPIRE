@@ -2,7 +2,7 @@
 *	FUNCTIONALITIES		*
 ************************/
 
-:-include('GameRules.pl').
+:-include('GameFunctionalitiesAux.pl').
 
 /*
 loadPlayers
